@@ -6,7 +6,11 @@ import json
 import matplotlib.pyplot as plt
 def clearScreen():
     os.system('cls' if os.name == 'nt' else 'clear')
-
+def jsonToData(results):
+    results = json.loads(results)
+    X=[[single_val for key,val in sample.items() for single_val in val] for sample in results]
+    Y=[[int(key)   for key,val in sample.items() for single_val in val] for sample in results]
+    return X,Y
 class Lane:
     def __init__(self,length) -> None:
         self.length = length
@@ -79,9 +83,9 @@ class Scheduler:
                     res_dict[num_lane].append(num_spac)
         return res_dict
 
-    def result(self):
+    def result(self,print_sim=False):
         cars_passed = [lane.num_of_cars_passed for lane in self.lanes] 
-        print(f"Cars passed: {sum(cars_passed)}")
+        if print_sim: print(f"Cars passed: {sum(cars_passed)}")
         return sum(cars_passed), self.lanesToJson()
     
 
@@ -104,75 +108,10 @@ class Scheduler:
         for i in range(int(self.simulation_time/self.refresh_freq)):
             self.step()
             clearScreen()    
-            if print_sim: self.printSim()
-            cars_passed, result = self.result()
-            print(f"Time of simulation {i*self.refresh_freq:0.1f}/{self.simulation_time}")
-            sleep(self.refresh_freq)
+            if print_sim: 
+                self.printSim()
+                print(f"Time of simulation {i*self.refresh_freq:0.1f}/{self.simulation_time}")
+                sleep(self.refresh_freq)
+            cars_passed, result = self.result(print_sim=print_sim)
             cumulative_results.append(result)
         return cars_passed,json.dumps(cumulative_results)
-#tests
-car1 = Car(100,5)
-print(f"Car: {car1}")
-lane = Lane(50)
-lane.addCar(car1)
-print(f"Lane: {lane}")
-print("====================== Simulation ======================")
-
-scheduler = Scheduler(
-    num_of_lanes =      5,
-    average_speed =     8,
-    average_speed_std = 10,
-    speed_std =         3,
-    car_freq =          4,
-    sim_time =          1,
-    sim_speed =         100
-    )
-
-flow1, results1 = scheduler.simulate(print_sim=False)
-
-scheduler = Scheduler(
-    num_of_lanes =      5,
-    average_speed =     8,
-    average_speed_std = 0,
-    speed_std =         0,
-    car_freq =          4,
-    sim_time =          1,
-    sim_speed =         100
-    )
-    
-flow2, results2 = scheduler.simulate(print_sim=False)
-print(f"Results for simulation 1: {flow1}. Result for simulation 2: {flow2}")
-# print(results1)
-
-#try animation in matplotlib
-from matplotlib.animation import FuncAnimation
-
-def jsonToData(results):
-    results = json.loads(results)
-    X=[[single_val for key,val in sample.items() for single_val in val] for sample in results]
-    Y=[[int(key)   for key,val in sample.items() for single_val in val] for sample in results]
-    return X,Y
-
-def createAnimation(X_list,Y_list):
-    data_q = len(X_list)
-    fig, ax = plt.subplots(data_q)
-    #plt.subplots_adjust(bottom=0.5,top=0.6)
-    manager = plt.get_current_fig_manager()
-    manager.full_screen_toggle()
-    colormap = np.array(['k','b','y','g','r'])
-
-    def animate(i):
-        for j in range(data_q):
-            x = X_list[j][i]
-            y = Y_list[j][i]
-            ax[j].clear()
-            ax[j].scatter(x, y, marker="s",c=colormap[np.array(y)])
-            ax[j].set_xlim([0,150])
-            ax[j].set_ylim([-1,5])
-    ani = FuncAnimation(fig, animate, frames=len(X1), interval=50, repeat=False)
-    plt.show()
-
-X1,Y1 = jsonToData(results1)
-X2,Y2 = jsonToData(results2)
-
-createAnimation([X1,X2],[Y1,Y2])
