@@ -1,4 +1,5 @@
 from traffic_simulation import *
+import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 scheduler = Scheduler(
@@ -26,7 +27,7 @@ scheduler = Scheduler(
 flow2, results2 = scheduler.simulate(print_sim=False)
 print(f"Results for simulation 1: {flow1}. Result for simulation 2: {flow2}")
 
-#try animation in matplotlib
+#As result from simulation is in json format, it can be visualized anywhere(f.e on the website). For now i plot it in matplotlib.
 
 def createAnimation(X_list,Y_list):
     data_q = len(X_list)

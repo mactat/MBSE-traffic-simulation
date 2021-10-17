@@ -3,14 +3,22 @@ from time import sleep
 import os
 import numpy as np
 import json
-import matplotlib.pyplot as plt
+
+'''
+Function for clening the screen, only needed in case of printing simulation in console
+'''
 def clearScreen():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+'''
+Function which decode json to plotable data
+'''
 def jsonToData(results):
     results = json.loads(results)
     X=[[single_val for key,val in sample.items() for single_val in val] for sample in results]
     Y=[[int(key)   for key,val in sample.items() for single_val in val] for sample in results]
     return X,Y
+
 class Lane:
     def __init__(self,length) -> None:
         self.length = length
@@ -21,7 +29,6 @@ class Lane:
         printable_mock = map(str,self.mock)
         return f'|{"".join(printable_mock)}|'
     
-
     #car is coming to the road    
     def addCar(self,car):
         if self.mock[0] == ' ':
@@ -40,25 +47,27 @@ class Lane:
                 if(placeholder.current_speed - i > -2): 
                     self.num_of_cars_passed += 1
                     self.mock[-i-1] = ' '
-                #for one elif(   self.mock[placeholder.current_speed - i + 1] == ' '):
-                #it has to have a clear road to jump for number of units == speed
+                #car has to have a clear road to jump for number of units(speed)
                 elif(self.mock[(-i):(placeholder.current_speed - i + 2)] == (placeholder.current_speed+2)*[' ']):  
                     self.mock[placeholder.current_speed - i + 1] = placeholder
                     self.mock[-i-1] = ' '
                 
 
 class Car:
+    # Behavior for update has to be changed as well as speed simulation, for now it is kind of dummy
     def __init__(self,average_speed,speed_std) -> None:
         self.average_speed = average_speed
         self.speed_std = speed_std
         self.update()
+
     def __repr__(self) -> str:
         return '*'
+
     def update(self):
         np.random.seed()
         self.current_speed = int(np.random.normal(loc=self.average_speed ,scale=self.speed_std,size=1))
         if(self.current_speed < 0): self.current_speed =0
-        
+
 class Scheduler:
     def __init__(self,num_of_lanes,average_speed,average_speed_std,speed_std,car_freq,sim_time,sim_speed) -> None:
         self.num_of_lanes = num_of_lanes
@@ -68,12 +77,13 @@ class Scheduler:
         self.car_freq = car_freq # number of cars coming per time unit
         self.lanes = [ Lane(150) for _ in range(self.num_of_lanes)] #change the lenmgth later
 
-        #for later
+        #fix it later
         self.simulation_time = sim_time # sec
         self.refresh_freq = 1/sim_speed # 1/sec
     
     def printSim(self):
         for lane in self.lanes: print(lane)
+
     def lanesToJson(self):
         res_dict = {}
         for num_lane,lane in enumerate(self.lanes):
@@ -88,30 +98,37 @@ class Scheduler:
         if print_sim: print(f"Cars passed: {sum(cars_passed)}")
         return sum(cars_passed), self.lanesToJson()
     
-
     def generateRandCar(self):
         np.random.seed()
-        init_speed = int(np.random.normal(loc=self.average_speed ,scale=self.average_speed_std,size=1)) #something wrong here
+        init_speed = int(np.random.normal(loc=self.average_speed ,scale=self.average_speed_std,size=1))
         if(init_speed < 0): init_speed =0
-        rand_car = Car(init_speed,self.speed_std) # change to given speed and a std
+        rand_car = Car(init_speed,self.speed_std)
         return rand_car
+
     def getRandomLane(self):
         np.random.seed()
         return random.randint(0,self.num_of_lanes-1)
+
     def step(self):
         #update map
         for lane in self.lanes: lane.step()
+        #add new cars to the map
         for _ in range(self.car_freq): self.lanes[self.getRandomLane()].addCar(self.generateRandCar())
 
     def simulate(self,print_sim=True):
         cumulative_results = []
         for i in range(int(self.simulation_time/self.refresh_freq)):
+            #update map
             self.step()
-            clearScreen()    
+
+            #if printing enabled print the map
             if print_sim: 
+                clearScreen()  
                 self.printSim()
                 print(f"Time of simulation {i*self.refresh_freq:0.1f}/{self.simulation_time}")
                 sleep(self.refresh_freq)
+
+            #gather the results
             cars_passed, result = self.result(print_sim=print_sim)
             cumulative_results.append(result)
         return cars_passed,json.dumps(cumulative_results)
