@@ -6,13 +6,13 @@ scheduler = Scheduler(
     num_of_lanes =      5,
     average_speed =     8,
     average_speed_std = 10,
-    speed_std =         3,
+    speed_std =         6,
     car_freq =          4,
     sim_time =          1,
     sim_speed =         100
     )
 
-flow1, results1 = scheduler.simulate(print_sim=True)\
+flow1, results1 = scheduler.simulate(print_sim=False)
 
 scheduler = Scheduler(
     num_of_lanes =      5,

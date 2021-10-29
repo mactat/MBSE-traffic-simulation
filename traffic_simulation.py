@@ -54,7 +54,6 @@ class Lane:
                 
 
 class Car:
-    # Behavior for update has to be changed as well as speed simulation, for now it is kind of dummy
     def __init__(self,average_speed,speed_std) -> None:
         self.average_speed = average_speed
         self.speed_std = speed_std
