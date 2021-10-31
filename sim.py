@@ -1,4 +1,5 @@
+from classes import  *
 
-
-class Driver:
-    
+print("start")
+helsingor = Highway(3, 110, 10)
+print(helsingor.lanes)
