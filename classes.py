@@ -24,10 +24,12 @@ class Car(Driver, Coms):
 class Lane:
     def __init__(self, no):
         self.no = no
+        self.cars = []
 
 
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):
+        self.lanes = []
         for i in range(no_lanes):
             self.lanes.append(Lane(i))
         self.speed_limit = speed_limit
