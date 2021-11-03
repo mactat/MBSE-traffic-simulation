@@ -41,54 +41,61 @@ def lower_samples(sample_list, multiple):
     return [sample for i, sample in enumerate(sample_list) if i%multiple == 0]
 
 
-def createAnimation(X_list,Y_list,animation_speed = 10):
+def createAnimation(X_list,Y_list,animation_speed = 10, highway_length=10,num_of_lanes=2,reduce_data=10):
     anim_time = len(X_list[0])
-    X_list = [lower_samples(X,animation_speed) for X in X_list]
-    Y_list = [lower_samples(Y,animation_speed) for Y in Y_list]
+    X_list = [lower_samples(X,reduce_data) for X in X_list]
+    Y_list = [lower_samples(Y,reduce_data) for Y in Y_list]
 
     data_q = len(X_list)
     fig, ax = plt.subplots(data_q)
     plt.xlabel("meters")
-    #plt.subplots_adjust(bottom=0.5,top=0.6)
+    plt.subplots_adjust(bottom=0.3,top=0.7)
     manager = plt.get_current_fig_manager()
     manager.full_screen_toggle()
     colormap = np.array(['skyblue','b','y','g','r'])
     interval = int(1000/animation_speed)
-    frames = int(anim_time/animation_speed)
-    num_of_lanes = [len(np.unique(Y)) for Y in Y_list]
+    frames = int(anim_time/reduce_data)
 
     def animate(i):
         for j in range(data_q):
             x = X_list[j][i]
             y = Y_list[j][i]
             ax[j].clear()
-            ax[j].scatter(x, y, marker="s",c=colormap[np.array(y)],s=300)
-            ax[j].set_xlim([0,10* 1000]) #10km
+            for k in range(num_of_lanes[j]-1): ax[j].axhline(0.5 + k, linestyle='--', color='white')
+            ax[j].scatter(x, y, marker="s",s=10)#c=colormap[np.array(y)])
+            ax[j].set_xlim([0,highway_length* 1000]) #10km
             ax[j].set_ylim([-1,num_of_lanes[j]])
-            ax[j].set_title(f"sim {j}")
+            # ax[j].set_title(f"sim {j}")
             ax[j].axhline(-0.5, linestyle='-', color='white')
-            ax[j].axhline(0.5, linestyle='--', color='white')
-            ax[j].axhline(1.5, linestyle='-', color='white')
-            #ax[j].set_yticks([-0.5, 0.5, 1.5], minor=False)
-            #ax[j].yaxis.grid(True, which='major')
+            ax[j].axhline(num_of_lanes[j] - 0.5, linestyle='-', color='white')
             ax[j].axes.get_yaxis().set_visible(False)
             clearScreen()
-            print(f"Animation time: {i/animation_speed:.2f}/{frames*interval/1000}s Real time: {i*animation_speed/60:.2f}/{anim_time/60:.2f}min")
+            print(f"Animation time: {i/animation_speed:.2f}/{frames/animation_speed}s Real time: {i*animation_speed/60:.2f}/{anim_time/60:.2f}min")
     ani = FuncAnimation(fig, animate, frames=frames, interval=interval, repeat=False)
     plt.show()
     return
 
+highway_length = 15
+num_of_lanes = 5
 
 scheduler = Scheduler(
-    num_of_lanes = 2, 
-    highway_length = 10, 
+    num_of_lanes = num_of_lanes, 
+    highway_length = highway_length, 
     speed_limit = 90, #in km/h
     step_time = 1) # in sec
 
-results = scheduler.sim_with_one_car(9)
+results1 = scheduler.sim_with_one_car(15)
+scheduler.reset()
+results2 = scheduler.sim_with_one_car(15)
 
+X1,Y1 = dictToData(results1)
+X2,Y2 = dictToData(results2)
 
-X1,Y1 = dictToData(results)
-X2,Y2 = dictToData(results)
-
-createAnimation([X1,X2],[Y1,Y2], animation_speed= 10)
+createAnimation(
+    [X1,X2], #x coord
+    [Y1,Y2], #y coord
+    animation_speed= 20,
+    reduce_data = 10,
+    highway_length=highway_length,
+    num_of_lanes=[num_of_lanes,num_of_lanes]
+    )

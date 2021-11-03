@@ -1,3 +1,4 @@
+from random import random
 
 '''
 That class is responisible for behaviour of the car.
@@ -5,19 +6,26 @@ It will be allowed to decided if we shold accelerate brake or change the lane.
 The issue is how it will now, what is it's enviroment(other cars on the road)
 '''
 class Driver:
-    def __init__(self, reaction_time, lane_change_behavior=None, exit_behavior=None, breaking_behavior=None):
+    def __init__(self, reaction_time, num_of_lanes, lane_change_behavior=None, exit_behavior=None, breaking_behavior=None):
         self.reaction_time = reaction_time
         self.lane_change_behavior = lane_change_behavior
         self.exit_behavior = exit_behavior
         self.breaking_behavior = breaking_behavior
+        self.num_of_lanes = num_of_lanes
+
+    def switch_lanes(self):
+        rand = random()
+        if(rand > 0.99): return "left"
+        elif(rand < 0.01): return "right"
+        else: return False
 
 '''
 This class represents the car. Car itself do not make any decision, it has to ask the driver.
 Crutial for this class will be method refresh, which will update the position, speed etc.
 '''
 class Car:
-    def __init__(self, initial_speed, number = 0, acc = 0, breaking = 0):
-        self.driver = Driver(reaction_time=0)
+    def __init__(self, initial_speed, num_of_lanes, lane,number = 0, acc = 0, breaking = 0):
+        self.driver = Driver(num_of_lanes=num_of_lanes,reaction_time=0)
         # In meters from the start of the highway
         self.position = 0
         self.number = number
@@ -25,7 +33,7 @@ class Car:
         self.size = 0
 
         # Setter would be better
-        self.lane = 0
+        self.lane = lane
         self.acc = acc
 
         #In m/s
@@ -37,6 +45,18 @@ class Car:
     def refresh(self,time_elapsed):
         self.current_speed = self.desired_speed
         self.position = self.position + self.current_speed*time_elapsed
+        lane = self.driver.switch_lanes()
+        if(lane): self.switch_lane(lane)
+
+    def switch_lane(self, direction):
+        if(direction == 'left' and self.lane != self.driver.num_of_lanes -1): 
+            self.lane += 1
+            return True
+        if(direction == 'right' and self.lane != 0): 
+            self.lane -= 1
+            return True
+        return False
+
 
 '''
 This will be implemented later as it is car with communication device.
@@ -67,7 +87,6 @@ class Lane:
             car.lane = self.no
             self.cars.append(car)
 
-
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):
         #In meters!
@@ -75,6 +94,13 @@ class Highway:
         self.no_lanes = no_lanes
         self.lanes = [Lane(no = i,length = self.length) for i in range(no_lanes)]
         self.speed_limit = speed_limit
-
+    def render(self):
+        for lane in self.lanes:
+            for car in lane.cars:
+                if(car.lane != lane.no):
+                    lane.cars.remove(car)
+                    self.lanes[car.lane].cars.append(car)
+        
+        for lane in self.lanes: lane.cars.sort(key=lambda car:car.position)
 
 

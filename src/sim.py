@@ -20,8 +20,8 @@ class Scheduler:
 
     # simple simulation with one car
     def sim_with_one_car(self, time_of_sim):
-        self.highway.lanes[0].add_car(Car(60*1000/3600)) # 60km/h
-        self.highway.lanes[1].add_car(Car(50*1000/3600)) # 60km/h
+        self.highway.lanes[0].add_car(Car(60*1000/3600,self.num_of_lanes,lane=0,number=0)) # 60km/h
+        self.highway.lanes[1].add_car(Car(50*1000/3600,self.num_of_lanes,lane=1,number=1)) # 60km/h
         return self.simulate(time_of_sim)
 
     # single step which has to be executed in every refresh of the sim
@@ -33,6 +33,8 @@ class Scheduler:
             for car in lane.cars:
                 # mkae changes in car, as speed, changing lane, etc
                 car.refresh(self.step_time)
+
+        self.highway.render()
         #gather the results
         state = self.get_state()
         self.cumulative_results[self.actual_time] = state
@@ -47,11 +49,31 @@ class Scheduler:
             #update map
             self.step()
         return self.cumulative_results
+        
+    def get_cumulative_state(self):
+        return self.cumulative_results
 
     def get_state(self):
         state = {}
         for lane in self.highway.lanes:
             state[lane.no] = { car.number:car.position for car in lane.cars }
         return state
+    
+    def reset(self):
+        self.highway = Highway(speed_limit = self.speed_limit, no_lanes = self.num_of_lanes, length = self.length)
+        self.cumulative_results = {}
+        self.actual_time = 0
 
+# Debugging
+# scheduler = Scheduler(
+#     num_of_lanes = 2, 
+#     highway_length = 10, 
+#     speed_limit = 90, #in km/h
+#     step_time = 1) # in sec
+# scheduler.highway.lanes[0].add_car(Car(60*1000/3600,scheduler.num_of_lanes,lane=0)) # 60km/h
+# scheduler.highway.lanes[1].add_car(Car(50*1000/3600,scheduler.num_of_lanes,lane=1,number=1)) # 60km/h
+# while(1):
+#     input()
 
+#     scheduler.step()
+#     print(scheduler.get_state())
