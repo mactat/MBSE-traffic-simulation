@@ -1,5 +1,9 @@
 
-
+'''
+That class is responisible for behaviour of the car.
+It will be allowed to decided if we shold accelerate brake or change the lane.
+The issue is how it will now, what is it's enviroment(other cars on the road)
+'''
 class Driver:
     def __init__(self, reaction_time, lane_change_behavior=None, exit_behavior=None, breaking_behavior=None):
         self.reaction_time = reaction_time
@@ -7,13 +11,10 @@ class Driver:
         self.exit_behavior = exit_behavior
         self.breaking_behavior = breaking_behavior
 
-
-class Coms:
-    def __init__(self, radius, delay):
-        self.range = radius
-        self.delay = delay
-
-
+'''
+This class represents the car. Car itself do not make any decision, it has to ask the driver.
+Crutial for this class will be method refresh, which will update the position, speed etc.
+'''
 class Car:
     def __init__(self, initial_speed, number = 0, acc = 0, breaking = 0):
         self.driver = Driver(reaction_time=0)
@@ -37,10 +38,20 @@ class Car:
         self.current_speed = self.desired_speed
         self.position = self.position + self.current_speed*time_elapsed
 
+'''
+This will be implemented later as it is car with communication device.
+'''
 class AutonomousCar(Car):
-    def __init__(self):
-        pass
+    def __init__(self, radius, delay):
+        self.range = radius
+        self.delay = delay
 
+
+'''
+Lane is an elementt of the highway. 
+It consist of Cars, length and number.
+Later we will need to implement lanr for entering the highway.
+'''
 class Lane:
     def __init__(self, no, length):
         self.no = no
