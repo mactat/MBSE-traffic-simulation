@@ -4,6 +4,23 @@ from matplotlib.animation import FuncAnimation
 import numpy as np
 import os
 
+#style
+plt.rcParams.update({
+"lines.color": "white",
+"patch.edgecolor": "white",
+"text.color": "black",
+"axes.facecolor": "black",
+"axes.edgecolor": "lightgray",
+"axes.labelcolor": "white",
+"xtick.color": "black",
+"ytick.color": "white",
+"grid.color": "lightgray",
+"figure.facecolor": "white",
+"figure.edgecolor": "white",
+"savefig.facecolor": "white",
+"savefig.edgecolor": "black"})
+
+
 '''
 Function for clening the screen, only needed in case of printing simulation in console
 '''
@@ -31,22 +48,30 @@ def createAnimation(X_list,Y_list,animation_speed = 10):
 
     data_q = len(X_list)
     fig, ax = plt.subplots(data_q)
+    plt.xlabel("meters")
     #plt.subplots_adjust(bottom=0.5,top=0.6)
     manager = plt.get_current_fig_manager()
     manager.full_screen_toggle()
-    colormap = np.array(['k','b','y','g','r'])
+    colormap = np.array(['skyblue','b','y','g','r'])
     interval = int(1000/animation_speed)
     frames = int(anim_time/animation_speed)
+    num_of_lanes = [len(np.unique(Y)) for Y in Y_list]
 
     def animate(i):
         for j in range(data_q):
             x = X_list[j][i]
             y = Y_list[j][i]
             ax[j].clear()
-            ax[j].scatter(x, y, marker="s",c=colormap[np.array(y)])
+            ax[j].scatter(x, y, marker="s",c=colormap[np.array(y)],s=300)
             ax[j].set_xlim([0,10* 1000]) #10km
-            ax[j].set_ylim([-1,2])
-            ax[j].set_xlabel("meters")
+            ax[j].set_ylim([-1,num_of_lanes[j]])
+            ax[j].set_title(f"sim {j}")
+            ax[j].axhline(-0.5, linestyle='-', color='white')
+            ax[j].axhline(0.5, linestyle='--', color='white')
+            ax[j].axhline(1.5, linestyle='-', color='white')
+            #ax[j].set_yticks([-0.5, 0.5, 1.5], minor=False)
+            #ax[j].yaxis.grid(True, which='major')
+            ax[j].axes.get_yaxis().set_visible(False)
             clearScreen()
             print(f"Animation time: {i/animation_speed:.2f}/{frames*interval/1000}s Real time: {i*animation_speed/60:.2f}/{anim_time/60:.2f}min")
     ani = FuncAnimation(fig, animate, frames=frames, interval=interval, repeat=False)

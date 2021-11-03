@@ -21,6 +21,7 @@ class Scheduler:
     # simple simulation with one car
     def sim_with_one_car(self, time_of_sim):
         self.highway.lanes[0].add_car(Car(60*1000/3600)) # 60km/h
+        self.highway.lanes[1].add_car(Car(50*1000/3600)) # 60km/h
         return self.simulate(time_of_sim)
 
     # single step which has to be executed in every refresh of the sim
