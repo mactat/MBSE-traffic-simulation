@@ -29,10 +29,11 @@ class Scheduler:
 
         #update map
         self.actual_time += 1
-        for lane in self.highway.lanes:
-            for car in lane.cars:
+        for lane_ind,lane in enumerate(self.highway.lanes):
+            for car_ind,car in enumerate(lane.cars):
                 # mkae changes in car, as speed, changing lane, etc
-                car.refresh(self.step_time)
+                car_env = self.highway.get_car_env(car_ind, lane_ind)
+                car.refresh(self.step_time,car_env)
 
         self.highway.render()
         #gather the results

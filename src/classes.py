@@ -18,6 +18,11 @@ class Driver:
         if(rand > 0.99): return "left"
         elif(rand < 0.01): return "right"
         else: return False
+    
+    #select action based on car env.
+    #action has to be always valid as we are not handeling any other cases
+    def choose_action(self,car_env):
+        pass
 
 '''
 This class represents the car. Car itself do not make any decision, it has to ask the driver.
@@ -42,7 +47,8 @@ class Car:
         self.breaking = breaking
     
     # Has to be depended on driver's behaviour, dummy for now
-    def refresh(self,time_elapsed):
+    def refresh(self,time_elapsed,car_env):
+        self.driver.choose_action(car_env)
         self.current_speed = self.desired_speed
         self.position = self.position + self.current_speed*time_elapsed
         lane = self.driver.switch_lanes()
@@ -102,5 +108,26 @@ class Highway:
                     self.lanes[car.lane].cars.append(car)
         
         for lane in self.lanes: lane.cars.sort(key=lambda car:car.position)
+    
+    #return car env in a form of distance to front, left_front, left_back, right_front, right_back car
+    # [              *<------+->            ]
+    # [                      o------>*      ]
+    # [           *<---------+-->*          ]
+    # that will represent what driver is seeing and if he is able to change the lanes etc.
+    def get_car_env(self, car_ind, lane_ind):
+        # front
+        if car_ind < len(self.lanes[lane_ind].cars) - 1: front = self.lanes[lane_ind].cars[car_ind + 1].position - self.lanes[lane_ind].cars[car_ind].position
+        else: front = float('inf')
+
+        #left front
+
+        #left back
+
+        #right front
+
+        #right back
+
+
+
 
 
