@@ -15,11 +15,11 @@ class Driver:
     
     # move it to choose action
     def switch_lanes(self,left_back,right_back,left_front,right_front): #params here
-        rand = random()
+        rand = self.random_mood()
         #do we want
-        if(rand > 0.6): 
+        if(rand > 0.5): 
             if(left_back > self.speed_limit and left_front > 30): return "left"
-        elif(rand < 0.4): 
+        elif(rand < 0.2): 
             if(right_back > self.speed_limit and right_front > 30): return "right"
         else: return False
     
@@ -30,14 +30,14 @@ class Driver:
     #  * Brake - params:
     #  * Change lanes - params: [left,right]
     #  * Take an exit
+    def random_mood(self):
+        return random()
     def choose_action(self,car_env):
         self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front = car_env
         
-        random_mood = random()
-        switch_lane = False
+        #check if switching lane is possible
+        switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
         if(self.current_speed*1 > self.front):
-            #to be changed to real formula 
-            switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
             if switch_lane: 
                 action = "change_lane"
                 params = {"direction":switch_lane}
@@ -47,13 +47,18 @@ class Driver:
                 action = "brake"
                 params = {"value":adjust}
 
-        elif(self.front > 100 and random_mood > self.mood):
+        elif(self.front > self.speed_limit + 20 and self.random_mood() > self.mood):
             #to be changed to real formula 
             adjust = 0.1 * self.speed_limit/3.6
             if(self.current_speed + adjust) > self.speed_limit: adjust = self.speed_limit - self.current_speed
 
             action = "accelerate"
             params = {"value":adjust} 
+            
+        # lean towards right behaviour
+        elif(switch_lane == 'right' and self.random_mood() > self.mood):
+            action = "change_lane"
+            params = {"direction":"right"}
         else:
             action = None
             params = {}
