@@ -79,7 +79,7 @@ def createAnimation(X_list,Y_list,animation_speed = 10, highway_length=10,num_of
 
 # ====================== examples =====================
 highway_length = 15
-num_of_lanes = 4
+num_of_lanes = 2
 
 scheduler = Scheduler(
                         average_drivers_mood = 0.9 ,
@@ -90,7 +90,7 @@ scheduler = Scheduler(
 
 # two simulations with the same scheduler
 sim_time = 30
-inflow = 1
+inflow = 9
 # results, results_dict = scheduler.sim_with_two_car(sim_time)
 # scheduler.reset()
 results, results_dict = scheduler.simulate(time_of_sim = sim_time, inflow = inflow) # cars per min->cannot be more than num of lanes
@@ -113,4 +113,4 @@ createAnimation(
     num_of_lanes=[num_of_lanes,num_of_lanes]
     )
 
-print(f"Results: {results}/{(sim_time-1)*inflow}")
+print(f"Results: {results}/{(sim_time)*inflow}")

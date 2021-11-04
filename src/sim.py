@@ -72,7 +72,7 @@ class Scheduler:
         return self.cars_passed,state
 
     def choose_speed(self):    
-        return random.gauss(self.speed_limit, 0.3*self.speed_limit) 
+        return random.gauss(self.speed_limit/2, 0.1*self.speed_limit) 
     #add new cars to the map
     def add_cars(self,num=1):  
         for i in range(num):
@@ -89,7 +89,7 @@ class Scheduler:
             #update map
             self.step()
             
-            if(inflow and self.actual_time%(60/inflow) == 0): self.add_cars()
+            if(inflow and self.actual_time%(int(60/inflow)) == 0): self.add_cars()
         return self.cars_passed, self.cumulative_results
         
     def get_cumulative_state(self):
