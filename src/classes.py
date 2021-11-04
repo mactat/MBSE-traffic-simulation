@@ -6,14 +6,15 @@ It will be allowed to decided if we shold accelerate brake or change the lane.
 The issue is how it will now, what is it's enviroment(other cars on the road)
 '''
 class Driver:
-    def __init__(self, reaction_time, lane_change_behavior=None, exit_behavior=None, breaking_behavior=None):
+    def __init__(self, reaction_time, mood=0.5 ,lane_change_behavior=None, exit_behavior=None, breaking_behavior=None):
         self.reaction_time = reaction_time
         self.lane_change_behavior = lane_change_behavior
         self.exit_behavior = exit_behavior
         self.breaking_behavior = breaking_behavior
+        self.mood = mood
     
     # move it to choose action
-    def switch_lanes(self):
+    def switch_lanes(self): #params here
         rand = random()
         if(rand > 0.99): return "left"
         elif(rand < 0.01): return "right"
@@ -27,9 +28,31 @@ class Driver:
     #  * Change lanes - params: [left,right]
     #  * Take an exit
     def choose_action(self,car_env):
-        self.front, self.num_of_lanes = car_env
-        action = None
-        params = (None,None)
+        self.front, self.num_of_lanes, self.current_speed, self.speed_limit = car_env
+        switch_lane = False #self.switch_lanes()
+        random_mood = random()
+        if(self.current_speed*1 > self.front):
+            #to be changed to real formula 
+            adjust = (self.current_speed-self.front/1) + 100 # adjust
+            if(self.current_speed - adjust) < 0: adjust = self.current_speed
+            action = "brake"
+            params = {"value":adjust}
+        elif(self.front > 100 and random_mood > self.mood):
+            #to be changed to real formula 
+            adjust = 0.1 * self.speed_limit/3.6
+            if(self.current_speed + adjust) > self.speed_limit: adjust = self.speed_limit - self.current_speed
+
+            action = "accelerate"
+            params = {"value":adjust}
+            print(f"adjust: {adjust}")
+
+        elif(switch_lane): 
+            action = "change_lane"
+            params = {"direction":switch_lane}
+        else:
+            action = None
+            params = {}
+
         return action, params
 
 '''
@@ -56,13 +79,26 @@ class Car:
     
     # Has to be depended on driver's behaviour, dummy for now
     def refresh(self,time_elapsed,car_env):
-        action, params = self.driver.choose_action(car_env) #should return VALID action and parameters
-        # Create behaviour based on selected actionS
-        self.current_speed = self.desired_speed
-        self.position = self.position + self.current_speed*time_elapsed
-        lane = self.driver.switch_lanes()
-        if(lane): self.switch_lane(lane)
+        # chaange the way we define env
+        front, num_of_lanes, self.speed_limit = car_env
+        car_env = front, num_of_lanes, self.current_speed, self.speed_limit
 
+        action, params = self.driver.choose_action(car_env) #should return VALID action and parameters
+        # Create behaviour based on selected actions
+        if action == 'accelerate': 
+            print(f"current_speed: {self.current_speed}")
+            self.current_speed += params["value"]
+
+        if action == 'brake': 
+            self.current_speed -= params["value"]
+            print(f"current_speed: {self.current_speed}")
+
+        if action == 'change_lane':
+            self.switch_lane(params["direction"])
+
+        self.position = self.position + self.current_speed*time_elapsed
+
+    # chcking validity can be moved to driver
     def switch_lane(self, direction):
         if(direction == 'left' and self.lane != self.driver.num_of_lanes -1): 
             self.lane += 1
@@ -100,7 +136,7 @@ class Lane:
         #check if list is emty or the first car is not on initial position
         if not self.cars or self.cars[0].position != 0 : 
             car.lane = self.no
-            self.cars.append(car)
+            self.cars.insert(0, car)
 
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):
@@ -119,21 +155,22 @@ class Highway:
         for lane in self.lanes: lane.cars.sort(key=lambda car:car.position)
     
     # Returns car env position in a form of distance to front, left_front, left_back, right_front, right_back car
-    # [              *<------+->            ]
+    # [              *<------+->*           ]
     # [                      o------>*      ]
     # [           *<---------+-->*          ]
     # that will represent what driver is seeing and if he is able to change the lanes etc.
     # Other params:
     #  * num of lanes
-    #  * is there an exit
-    #  * is it raining
-    #  * speed limit
+    #  * is there an exit - later
+    #  * is it raining - later
+    #  * speed limit - later
 
     def get_car_env(self, car_ind, lane_ind):
         # every change here require change in drivers class, to be able to handle new data
 
         # front
-        if car_ind < len(self.lanes[lane_ind].cars) - 1: front = self.lanes[lane_ind].cars[car_ind + 1].position - self.lanes[lane_ind].cars[car_ind].position
+        if car_ind < len(self.lanes[lane_ind].cars) - 1: 
+            front = self.lanes[lane_ind].cars[car_ind + 1].position - self.lanes[lane_ind].cars[car_ind].position
         else: front = float('inf')
 
         #left front
@@ -144,7 +181,7 @@ class Highway:
 
         #right back
         
-        return front, self.no_lanes
+        return front, self.no_lanes, self.speed_limit
 
 
 

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
 import os
+import json
 
 #style
 plt.rcParams.update({
@@ -77,27 +78,31 @@ def createAnimation(X_list,Y_list,animation_speed = 10, highway_length=10,num_of
 
 
 # ====================== examples =====================
-highway_length = 10
+highway_length = 5
 num_of_lanes = 4
 
 scheduler = Scheduler(
     num_of_lanes = num_of_lanes, 
     highway_length = highway_length, 
-    speed_limit = 90, #in km/h
+    speed_limit = 100, #in km/h
     step_time = 1) # in sec
 
 # two simulations with the same scheduler
-results1 = scheduler.sim_with_one_car(10)
-scheduler.reset()
-results2 = scheduler.sim_with_one_car(10)
+results1 = scheduler.sim_with_two_car(5)
+#scheduler.reset()
+#results2 = scheduler.simulate(time_of_sim = 5, inflow = 3) # cars per min->cannot be more than num of lanes
+
+out_file = open("out.json", "w") 
+json.dump(results1, out_file, indent = 6) 
+out_file.close() 
 
 X1,Y1 = dictToData(results1)
-X2,Y2 = dictToData(results2)
+X2,Y2 = dictToData(results1)
 
 createAnimation(
     [X1,X2], #x coord
     [Y1,Y2], #y coord
-    animation_speed= 20,
+    animation_speed= 10,
     reduce_data = 10,
     highway_length=highway_length,
     num_of_lanes=[num_of_lanes,num_of_lanes]
