@@ -6,7 +6,7 @@ It will be allowed to decided if we shold accelerate brake or change the lane.
 The issue is how it will now, what is it's enviroment(other cars on the road)
 '''
 class Driver:
-    def __init__(self, reaction_time, mood=0.5 ,lane_change_behavior=None, exit_behavior=None, breaking_behavior=None):
+    def __init__(self, reaction_time, mood=0.95 ,lane_change_behavior=None, exit_behavior=None, breaking_behavior=None):
         self.reaction_time = reaction_time
         self.lane_change_behavior = lane_change_behavior
         self.exit_behavior = exit_behavior
@@ -14,10 +14,13 @@ class Driver:
         self.mood = mood
     
     # move it to choose action
-    def switch_lanes(self): #params here
+    def switch_lanes(self,left_back,right_back,left_front,right_front): #params here
         rand = random()
-        if(rand > 0.99): return "left"
-        elif(rand < 0.01): return "right"
+        #do we want
+        if(rand > 0.99): 
+            if(left_back > self.speed_limit and left_front > 15): return "left"
+        elif(rand < 0.01): 
+            if(right_back > self.speed_limit and right_front > 15): return "right"
         else: return False
     
     # Select action based on car env.
@@ -28,12 +31,12 @@ class Driver:
     #  * Change lanes - params: [left,right]
     #  * Take an exit
     def choose_action(self,car_env):
-        self.front, self.num_of_lanes, self.current_speed, self.speed_limit = car_env
-        switch_lane = False #self.switch_lanes()
+        self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front = car_env
+        switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
         random_mood = random()
         if(self.current_speed*1 > self.front):
             #to be changed to real formula 
-            adjust = (self.current_speed-self.front/1) + 100 # adjust
+            adjust = (self.current_speed-self.front/1) + 10 # adjust
             if(self.current_speed - adjust) < 0: adjust = self.current_speed
             action = "brake"
             params = {"value":adjust}
@@ -44,11 +47,11 @@ class Driver:
 
             action = "accelerate"
             params = {"value":adjust}
-            print(f"adjust: {adjust}")
 
-        elif(switch_lane): 
+        if(switch_lane): 
             action = "change_lane"
             params = {"direction":switch_lane}
+
         else:
             action = None
             params = {}
@@ -60,8 +63,8 @@ This class represents the car. Car itself do not make any decision, it has to as
 Crutial for this class will be method refresh, which will update the position, speed etc.
 '''
 class Car:
-    def __init__(self, initial_speed, lane,number = 0, acc = 0, breaking = 0):
-        self.driver = Driver(reaction_time=0)
+    def __init__(self, initial_speed, lane,drivers_mood=0.95,number = 0, acc = 0, breaking = 0):
+        self.driver = Driver(reaction_time=0, mood = drivers_mood)
         # In meters from the start of the highway
         self.position = 0
         self.number = number
@@ -80,18 +83,16 @@ class Car:
     # Has to be depended on driver's behaviour, dummy for now
     def refresh(self,time_elapsed,car_env):
         # chaange the way we define env
-        front, num_of_lanes, self.speed_limit = car_env
-        car_env = front, num_of_lanes, self.current_speed, self.speed_limit
+        front, num_of_lanes, self.speed_limit,left_back,right_back,left_front,right_front = car_env
+        car_env = front, num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front
 
         action, params = self.driver.choose_action(car_env) #should return VALID action and parameters
         # Create behaviour based on selected actions
         if action == 'accelerate': 
-            print(f"current_speed: {self.current_speed}")
             self.current_speed += params["value"]
 
         if action == 'brake': 
             self.current_speed -= params["value"]
-            print(f"current_speed: {self.current_speed}")
 
         if action == 'change_lane':
             self.switch_lane(params["direction"])
@@ -172,16 +173,47 @@ class Highway:
         if car_ind < len(self.lanes[lane_ind].cars) - 1: 
             front = self.lanes[lane_ind].cars[car_ind + 1].position - self.lanes[lane_ind].cars[car_ind].position
         else: front = float('inf')
-
-        #left front
-
-        #left back
-
-        #right front
-
-        #right back
         
-        return front, self.no_lanes, self.speed_limit
+        my_position = self.lanes[lane_ind].cars[car_ind].position
+
+        #left
+        left_front = float("Inf")
+        right_front = float("Inf")
+        left_back = float("Inf")
+        right_back = float("Inf")
+
+        if lane_ind < self.no_lanes - 1:
+            for i,car in enumerate(self.lanes[lane_ind + 1].cars):
+                if car.position > my_position: 
+                    left_front = car.position - my_position
+                    if i > 0:
+                        left_back = my_position = self.lanes[lane_ind + 1].cars[i-1].position
+                    break
+            else: 
+                if(self.lanes[lane_ind + 1].cars):
+                    left_back = my_position - self.lanes[lane_ind + 1].cars[-1].position
+        else:
+            left_front = 0
+            left_back = 0
+
+        #right
+        if lane_ind > 0:
+            for i,car in enumerate(self.lanes[lane_ind - 1].cars):
+                if car.position > my_position: 
+                    right_front = car.position - my_position
+                    if i > 0:
+                        right_back = my_position - self.lanes[lane_ind - 1].cars[i-1].position
+                    break
+            else: 
+                if(self.lanes[lane_ind - 1].cars):
+                    right_back = my_position - self.lanes[lane_ind - 1].cars[0].position
+        else:
+            right_front = 0
+            right_back = 0
+
+
+
+        return front, self.no_lanes, self.speed_limit,left_back,right_back,left_front,right_front
 
 
 

@@ -78,26 +78,31 @@ def createAnimation(X_list,Y_list,animation_speed = 10, highway_length=10,num_of
 
 
 # ====================== examples =====================
-highway_length = 5
-num_of_lanes = 4
+highway_length = 2
+num_of_lanes = 1
 
 scheduler = Scheduler(
-    num_of_lanes = num_of_lanes, 
-    highway_length = highway_length, 
-    speed_limit = 100, #in km/h
-    step_time = 1) # in sec
+                        average_drivers_mood = 0.9 ,
+                        num_of_lanes = num_of_lanes, 
+                        highway_length = highway_length, 
+                        speed_limit = 30, #in km/h
+                        step_time = 1) # in sec
 
 # two simulations with the same scheduler
-results1 = scheduler.sim_with_two_car(5)
+sim_time = 10
+inflow = 1
+# results, results_dict = scheduler.sim_with_two_car(sim_time)
 #scheduler.reset()
-#results2 = scheduler.simulate(time_of_sim = 5, inflow = 3) # cars per min->cannot be more than num of lanes
+results, results_dict = scheduler.simulate(time_of_sim = sim_time, inflow = inflow) # cars per min->cannot be more than num of lanes
+
+# results, results_dict = scheduler.sim_lane_changing(sim_time)
 
 out_file = open("out.json", "w") 
-json.dump(results1, out_file, indent = 6) 
+json.dump(results_dict, out_file, indent = 6) 
 out_file.close() 
 
-X1,Y1 = dictToData(results1)
-X2,Y2 = dictToData(results1)
+X1,Y1 = dictToData(results_dict)
+X2,Y2 = dictToData(results_dict)
 
 createAnimation(
     [X1,X2], #x coord
@@ -107,3 +112,5 @@ createAnimation(
     highway_length=highway_length,
     num_of_lanes=[num_of_lanes,num_of_lanes]
     )
+
+print(f"Results: {results}/{(sim_time-1)*inflow}")

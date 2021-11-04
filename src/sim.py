@@ -1,3 +1,4 @@
+from numpy.lib.function_base import average
 from classes import  *
 import json
 import random
@@ -8,10 +9,11 @@ It takes all parameters of the simulation and produces output.
 It will be able to perform whole simulation or go step by step by simulation.
 '''
 class Scheduler:
-    def __init__(self,num_of_lanes, highway_length, speed_limit,step_time) -> None:
+    def __init__(self,num_of_lanes, highway_length, speed_limit,step_time,average_drivers_mood) -> None:
         self.num_of_lanes = num_of_lanes
         self.length = highway_length * 1000 # from km to m
         self.speed_limit = speed_limit*1000/3600
+        self.average_drivers_mood = average_drivers_mood
 
         #fix it later
         self.step_time = step_time # in seconds
@@ -19,6 +21,7 @@ class Scheduler:
         self.cumulative_results = {}
         self.actual_time = 0
         self.in_car_counter = 0
+        self.cars_passed = 0
 
     # simple simulation with one car
     def sim_with_two_car(self, time_of_sim):
@@ -36,6 +39,17 @@ class Scheduler:
         # self.add_cars(1)
         return self.simulate(time_of_sim,0)
 
+    def sim_lane_changing(self, time_of_sim):
+        car1 = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+        car1.driver.mood = 1
+        self.in_car_counter += 1
+        car2 = Car(50*1000/3600,lane=2, number=self.in_car_counter)
+        car2.driver.mood = 1
+        self.in_car_counter += 1
+        self.highway.lanes[1].add_car(car1)
+        self.highway.lanes[2].add_car(car2)
+        return self.simulate(time_of_sim,0)
+
     # single step which has to be executed in every refresh of the sim
     def step(self):
 
@@ -47,20 +61,25 @@ class Scheduler:
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
                 # make changes in car, as speed, changing lane, etc based on env
                 car.refresh(self.step_time,car_env)
+                if car.position > self.length: 
+                    lane.cars.remove(car)
+                    self.cars_passed += 1
 
         self.highway.render()
         #gather the results
         state = self.get_state()
         self.cumulative_results[self.actual_time] = state
-        return state
+        return self.cars_passed,state
+
     def choose_speed(self):    
-        return random.randint(self.speed_limit-10, self.speed_limit)
+        return random.gauss(self.speed_limit, 0.3*self.speed_limit) 
     #add new cars to the map
     def add_cars(self,num):  
         for i in range(num):
             self.highway.lanes[i].add_car(Car(self.choose_speed()*1000/3600,
                                                 lane=i,
-                                                number=self.in_car_counter))
+                                                number=self.in_car_counter,
+                                                drivers_mood=random.gauss(self.average_drivers_mood, 0.05)))
             self.in_car_counter += 1
     # executin multiple steps
     def simulate(self, time_of_sim, inflow):
@@ -69,7 +88,7 @@ class Scheduler:
             #update map
             self.step()
             if(inflow and self.actual_time%60 == 0): self.add_cars(inflow)
-        return self.cumulative_results
+        return self.cars_passed, self.cumulative_results
         
     def get_cumulative_state(self):
         return self.cumulative_results
@@ -84,17 +103,24 @@ class Scheduler:
         self.highway = Highway(speed_limit = self.speed_limit, no_lanes = self.num_of_lanes, length = self.length)
         self.cumulative_results = {}
         self.actual_time = 0
+        self.cars_passed = 0
 
 # Debugging
+# inflow = 3 #cars per minute
+# sim_time = 120
 # scheduler = Scheduler(
-#     num_of_lanes = 2, 
+#     average_drivers_mood = 0.95, #likelihood of driver not accelerating
+#     num_of_lanes = 4, 
 #     highway_length = 10, 
 #     speed_limit = 60, #in km/h
 #     step_time = 1) # in sec
-# results1 = scheduler.sim_with_two_car(10)
+
+# results,results_dict = scheduler.simulate(sim_time,inflow)
 # out_file = open("out.json", "w") 
-# json.dump(results1, out_file, indent = 6) 
+# json.dump(results_dict, out_file, indent = 6) 
 # out_file.close() 
+# print(f"Results:{results}/{(sim_time-1)*inflow}")
+
 
 # scheduler.highway.lanes[0].add_car(Car(60*1000/3600,scheduler.num_of_lanes,lane=0)) # 60km/h
 # scheduler.highway.lanes[1].add_car(Car(50*1000/3600,scheduler.num_of_lanes,lane=1,number=1)) # 60km/h
