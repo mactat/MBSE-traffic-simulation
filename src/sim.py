@@ -46,8 +46,8 @@ class Scheduler:
         car2 = Car(50*1000/3600,lane=2, number=self.in_car_counter)
         car2.driver.mood = 1
         self.in_car_counter += 1
-        self.highway.lanes[1].add_car(car1)
-        self.highway.lanes[2].add_car(car2)
+        self.highway.lanes[0].add_car(car1)
+        self.highway.lanes[1].add_car(car2)
         return self.simulate(time_of_sim,0)
 
     # single step which has to be executed in every refresh of the sim
@@ -74,20 +74,22 @@ class Scheduler:
     def choose_speed(self):    
         return random.gauss(self.speed_limit, 0.3*self.speed_limit) 
     #add new cars to the map
-    def add_cars(self,num):  
+    def add_cars(self,num=1):  
         for i in range(num):
-            self.highway.lanes[i].add_car(Car(self.choose_speed()*1000/3600,
-                                                lane=i,
+            rand_lane = random.randint(0,self.num_of_lanes-1)
+            added = self.highway.lanes[rand_lane].add_car(Car(self.choose_speed()*1000/3600,
+                                                lane=rand_lane,
                                                 number=self.in_car_counter,
                                                 drivers_mood=random.gauss(self.average_drivers_mood, 0.05)))
-            self.in_car_counter += 1
+            if added: self.in_car_counter += 1
     # executin multiple steps
     def simulate(self, time_of_sim, inflow):
         time_of_sim = time_of_sim * 60 # to seconds
         for i in range(int(time_of_sim/self.step_time)):
             #update map
             self.step()
-            if(inflow and self.actual_time%60 == 0): self.add_cars(inflow)
+            
+            if(inflow and self.actual_time%(60/inflow) == 0): self.add_cars()
         return self.cars_passed, self.cumulative_results
         
     def get_cumulative_state(self):

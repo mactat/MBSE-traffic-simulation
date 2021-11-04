@@ -17,10 +17,10 @@ class Driver:
     def switch_lanes(self,left_back,right_back,left_front,right_front): #params here
         rand = random()
         #do we want
-        if(rand > 0.99): 
-            if(left_back > self.speed_limit and left_front > 15): return "left"
-        elif(rand < 0.01): 
-            if(right_back > self.speed_limit and right_front > 15): return "right"
+        if(rand > 0.6): 
+            if(left_back > self.speed_limit and left_front > 30): return "left"
+        elif(rand < 0.4): 
+            if(right_back > self.speed_limit and right_front > 30): return "right"
         else: return False
     
     # Select action based on car env.
@@ -32,26 +32,28 @@ class Driver:
     #  * Take an exit
     def choose_action(self,car_env):
         self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front = car_env
-        switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
+        
         random_mood = random()
+        switch_lane = False
         if(self.current_speed*1 > self.front):
             #to be changed to real formula 
-            adjust = (self.current_speed-self.front/1) + 10 # adjust
-            if(self.current_speed - adjust) < 0: adjust = self.current_speed
-            action = "brake"
-            params = {"value":adjust}
+            switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
+            if switch_lane: 
+                action = "change_lane"
+                params = {"direction":switch_lane}
+            else:
+                adjust = (self.current_speed-self.front/1) + 10 # adjust
+                if(self.current_speed - adjust) < 0: adjust = self.current_speed
+                action = "brake"
+                params = {"value":adjust}
+
         elif(self.front > 100 and random_mood > self.mood):
             #to be changed to real formula 
             adjust = 0.1 * self.speed_limit/3.6
             if(self.current_speed + adjust) > self.speed_limit: adjust = self.speed_limit - self.current_speed
 
             action = "accelerate"
-            params = {"value":adjust}
-
-        if(switch_lane): 
-            action = "change_lane"
-            params = {"direction":switch_lane}
-
+            params = {"value":adjust} 
         else:
             action = None
             params = {}
@@ -138,6 +140,8 @@ class Lane:
         if not self.cars or self.cars[0].position != 0 : 
             car.lane = self.no
             self.cars.insert(0, car)
+            return True
+        else: return False
 
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):

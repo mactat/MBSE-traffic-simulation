@@ -52,7 +52,7 @@ def createAnimation(X_list,Y_list,animation_speed = 10, highway_length=10,num_of
     plt.xlabel("meters")
     plt.subplots_adjust(bottom=0.3,top=0.7)
     manager = plt.get_current_fig_manager()
-    manager.full_screen_toggle()
+    #manager.full_screen_toggle()
     colormap = np.array(['skyblue','b','y','g','r'])
     interval = int(1000/animation_speed)
     frames = int(anim_time/reduce_data)
@@ -78,24 +78,24 @@ def createAnimation(X_list,Y_list,animation_speed = 10, highway_length=10,num_of
 
 
 # ====================== examples =====================
-highway_length = 2
-num_of_lanes = 1
+highway_length = 15
+num_of_lanes = 4
 
 scheduler = Scheduler(
                         average_drivers_mood = 0.9 ,
                         num_of_lanes = num_of_lanes, 
                         highway_length = highway_length, 
-                        speed_limit = 30, #in km/h
+                        speed_limit = 90, #in km/h
                         step_time = 1) # in sec
 
 # two simulations with the same scheduler
-sim_time = 10
+sim_time = 30
 inflow = 1
 # results, results_dict = scheduler.sim_with_two_car(sim_time)
-#scheduler.reset()
+# scheduler.reset()
 results, results_dict = scheduler.simulate(time_of_sim = sim_time, inflow = inflow) # cars per min->cannot be more than num of lanes
 
-# results, results_dict = scheduler.sim_lane_changing(sim_time)
+#results, results_dict = scheduler.sim_lane_changing(sim_time)
 
 out_file = open("out.json", "w") 
 json.dump(results_dict, out_file, indent = 6) 
