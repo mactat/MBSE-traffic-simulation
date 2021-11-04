@@ -75,8 +75,10 @@ def createAnimation(X_list,Y_list,animation_speed = 10, highway_length=10,num_of
     plt.show()
     return
 
-highway_length = 15
-num_of_lanes = 5
+
+# ====================== examples =====================
+highway_length = 10
+num_of_lanes = 4
 
 scheduler = Scheduler(
     num_of_lanes = num_of_lanes, 
@@ -84,9 +86,10 @@ scheduler = Scheduler(
     speed_limit = 90, #in km/h
     step_time = 1) # in sec
 
-results1 = scheduler.sim_with_one_car(15)
+# two simulations with the same scheduler
+results1 = scheduler.sim_with_one_car(10)
 scheduler.reset()
-results2 = scheduler.sim_with_one_car(15)
+results2 = scheduler.sim_with_one_car(10)
 
 X1,Y1 = dictToData(results1)
 X2,Y2 = dictToData(results2)

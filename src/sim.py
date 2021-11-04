@@ -20,8 +20,8 @@ class Scheduler:
 
     # simple simulation with one car
     def sim_with_one_car(self, time_of_sim):
-        self.highway.lanes[0].add_car(Car(60*1000/3600,self.num_of_lanes,lane=0,number=0)) # 60km/h
-        self.highway.lanes[1].add_car(Car(50*1000/3600,self.num_of_lanes,lane=1,number=1)) # 60km/h
+        self.highway.lanes[0].add_car(Car(60*1000/3600,lane=0,number=0)) # 60km/h
+        self.highway.lanes[1].add_car(Car(50*1000/3600,lane=1,number=1)) # 60km/h
         return self.simulate(time_of_sim)
 
     # single step which has to be executed in every refresh of the sim
@@ -31,8 +31,9 @@ class Scheduler:
         self.actual_time += 1
         for lane_ind,lane in enumerate(self.highway.lanes):
             for car_ind,car in enumerate(lane.cars):
-                # mkae changes in car, as speed, changing lane, etc
+                # gateher info about car env
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
+                # make changes in car, as speed, changing lane, etc based on env
                 car.refresh(self.step_time,car_env)
 
         self.highway.render()
