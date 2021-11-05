@@ -44,7 +44,12 @@ def lower_samples(sample_list, multiple):
     return [sample for i, sample in enumerate(sample_list) if i%multiple == 0]
 
 
-def createAnimation(X_list,Y_list,colors_list,animation_speed = 10, highway_length=10,num_of_lanes=2,reduce_data=10):
+def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_lanes=2,reduce_data=10):
+    all_results = [dictToData(results) for results in results_list]
+    X_list = [resultls[0] for resultls in all_results]
+    Y_list = [resultls[1] for resultls in all_results]
+    colors_list = [resultls[2] for resultls in all_results]
+
     anim_time = len(X_list[0])
     X_list = [lower_samples(X,reduce_data) for X in X_list]
     Y_list = [lower_samples(Y,reduce_data) for Y in Y_list]
@@ -55,6 +60,7 @@ def createAnimation(X_list,Y_list,colors_list,animation_speed = 10, highway_leng
     plt.xlabel("meters")
     size_adj = num_of_lanes[0]/100
     plt.subplots_adjust(bottom=(0.4-size_adj),top=(0.6+size_adj))
+    plt.set_cmap('gist_rainbow')
     manager = plt.get_current_fig_manager()
     #manager.full_screen_toggle()
     colormap = np.array(['skyblue','b','y','g','r'])
@@ -82,42 +88,3 @@ def createAnimation(X_list,Y_list,colors_list,animation_speed = 10, highway_leng
     return
 
 
-# ====================== examples =====================
-highway_length = 1
-num_of_lanes = 3
-average_drivers_mood = 0.85
-sim_time = 30
-inflow = 25
-
-scheduler = Scheduler(
-                        average_drivers_mood = average_drivers_mood ,
-                        num_of_lanes = num_of_lanes, 
-                        highway_length = highway_length, 
-                        speed_limit = 60, #in km/h
-                        step_time = 1) # in sec
-
-# two simulations with the same scheduler
-# results, results_dict = scheduler.sim_with_two_car(sim_time)
-# scheduler.reset()
-results, results_dict = scheduler.simulate(time_of_sim = sim_time, inflow = inflow) # cars per min->cannot be more than num of lanes
-
-#results, results_dict = scheduler.sim_lane_changing(sim_time)
-
-out_file = open("out.json", "w") 
-json.dump(results_dict, out_file, indent = 6) 
-out_file.close() 
-
-X1,Y1,colors1 = dictToData(results_dict)
-X2,Y2,colors2 = dictToData(results_dict)
-
-createAnimation(
-    [X1], #x coord
-    [Y1], #y coord
-    [colors1],
-    animation_speed= 10,
-    reduce_data = 10,
-    highway_length=highway_length,
-    num_of_lanes=[num_of_lanes,num_of_lanes]
-    )
-
-print(f"Results: {results}/{(sim_time)*inflow}")

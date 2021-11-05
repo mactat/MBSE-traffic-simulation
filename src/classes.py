@@ -18,9 +18,9 @@ class Driver:
         rand = self.random_mood()
         #do we want
         if(rand > 0.5): 
-            if(left_back > self.speed_limit and left_front > 30): return "left"
+            if(left_back > self.speed_limit and left_front > 20): return "left"
         elif(rand < 0.2): 
-            if(right_back > self.speed_limit and right_front > 30): return "right"
+            if(right_back > self.speed_limit and right_front > 20): return "right"
         else: return False
     
     # Select action based on car env.
@@ -54,9 +54,9 @@ class Driver:
 
             action = "accelerate"
             params = {"value":adjust} 
-            
+
         # lean towards right behaviour
-        elif(switch_lane == 'right' and self.random_mood() > self.mood):
+        elif(switch_lane == 'right' and self.random_mood() > 0.95):
             action = "change_lane"
             params = {"direction":"right"}
         else:

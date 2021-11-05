@@ -39,16 +39,43 @@ class Scheduler:
         # self.add_cars(1)
         return self.simulate(time_of_sim,0)
 
-    def sim_lane_changing(self, time_of_sim):
-        car1 = Car(50*1000/3600,lane=1, number=self.in_car_counter)
-        car1.driver.mood = 1
-        self.in_car_counter += 1
-        car2 = Car(50*1000/3600,lane=2, number=self.in_car_counter)
-        car2.driver.mood = 1
-        self.in_car_counter += 1
-        self.highway.lanes[0].add_car(car1)
-        self.highway.lanes[1].add_car(car2)
-        return self.simulate(time_of_sim,0)
+    def sim_lane_changing(self, time_of_sim, change_lane=False, overtake = False):
+  
+        if not change_lane and not overtake:
+
+            car1 = Car(50*1000/3600,lane=0, number=self.in_car_counter)
+            car1.driver.mood = 1
+            self.in_car_counter += 1
+            car2 = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+            car2.driver.mood = 1
+            self.in_car_counter += 1
+
+            self.highway.lanes[0].add_car(car1)
+            self.highway.lanes[1].add_car(car2)
+
+        if change_lane and not overtake:
+            car1 = Car(55*1000/3600,lane=0, number=self.in_car_counter)
+            car1.driver.mood = 1
+            self.in_car_counter += 1
+            car2 = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+            car2.driver.mood = 0.9
+            self.in_car_counter += 1
+            self.highway.lanes[0].add_car(car1)
+            self.highway.lanes[1].add_car(car2)
+
+        if overtake:
+            car1 = Car(55*1000/3600,lane=0, number=self.in_car_counter)
+            car1.driver.mood = 1
+            self.in_car_counter += 1
+            car2 = Car(60*1000/3600,lane=0, number=self.in_car_counter)
+            car2.driver.mood = 0.9
+            self.in_car_counter += 1
+
+            self.highway.lanes[0].add_car(car1)
+            for i in range(10): self.step()
+            self.highway.lanes[0].add_car(car2)
+
+        return self.simulate(time_of_sim-10,0)
 
     # single step which has to be executed in every refresh of the sim
     def step(self):
@@ -100,7 +127,11 @@ class Scheduler:
         for lane in self.highway.lanes:
             state[lane.no] = { car.number:car.position for car in lane.cars }
         return state
-    
+    def safe_to_file(self, filename):
+        out_file = open(f"{ filename }.json", "w") 
+        json.dump(self.cumulative_results, out_file, indent = 6) 
+        out_file.close() 
+
     def reset(self):
         self.highway = Highway(speed_limit = self.speed_limit, no_lanes = self.num_of_lanes, length = self.length)
         self.cumulative_results = {}
