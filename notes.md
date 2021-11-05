@@ -1,0 +1,2 @@
+# notes
+- Create truck class 
