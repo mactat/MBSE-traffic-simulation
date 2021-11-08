@@ -38,7 +38,7 @@ highway_length = 1
 num_of_lanes = 4
 average_drivers_mood = 0.85 #
 sim_time = 20
-inflow = 3 #cars per minute
+inflow = 10 #cars per minute
 speed_limit = 60
 
 scheduler = Scheduler(
