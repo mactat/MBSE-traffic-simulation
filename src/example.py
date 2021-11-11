@@ -35,30 +35,30 @@ createAnimation(
 
 # ======================= More complicated ====================
 
-# highway_length = 1
-# num_of_lanes = 5
-# average_drivers_mood = 0.85 #
-# sim_time = 10
-# inflow = 8 #cars per minute
-# speed_limit = 80
+highway_length = 1
+num_of_lanes = 5
+average_drivers_mood = 0.85 #
+sim_time = 10
+inflow = 8 #cars per minute
+speed_limit = 80
 
-# scheduler = Scheduler(
-#                         average_drivers_mood = average_drivers_mood ,
-#                         num_of_lanes = num_of_lanes, 
-#                         highway_length = highway_length, 
-#                         speed_limit = speed_limit, #in km/h
-#                         step_time = 1) # in sec
+scheduler = Scheduler(
+                        average_drivers_mood = average_drivers_mood ,
+                        num_of_lanes = num_of_lanes, 
+                        highway_length = highway_length, 
+                        speed_limit = speed_limit, #in km/h
+                        step_time = 1) # in sec
 
-# results, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
-# scheduler.safe_to_file("sim1")
+results, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
+scheduler.safe_to_file("sim1")
 
-# createAnimation(
-#     [results_dict1],
-#     animation_speed= 10,
-#     reduce_data = 1,
-#     highway_length=highway_length,
-#     num_of_lanes=[num_of_lanes],
-#     export_gif_path = "../static/testcase.gif" #if not provided, animation will be shown in the form of plot
-#     )
+createAnimation(
+    [results_dict1],
+    animation_speed= 10,
+    reduce_data = 1,
+    highway_length=highway_length,
+    num_of_lanes=[num_of_lanes],
+    export_gif_path = "../static/testcase.gif" #if not provided, animation will be shown in the form of plot
+    )
 
-# print(f"Results: {results}/{(sim_time)*inflow}")
+print(f"Results: {results}/{(sim_time)*inflow}")
