@@ -1,6 +1,7 @@
 from sim import *
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from matplotlib.animation import PillowWriter
 import numpy as np
 import os
 import json
@@ -44,7 +45,7 @@ def lower_samples(sample_list, multiple):
     return [sample for i, sample in enumerate(sample_list) if i%multiple == 0]
 
 
-def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_lanes=2,reduce_data=10):
+def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_lanes=2,reduce_data=10,export_gif_path=None):
     all_results = [dictToData(results) for results in results_list]
     X_list = [resultls[0] for resultls in all_results]
     Y_list = [resultls[1] for resultls in all_results]
@@ -84,7 +85,10 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
             clearScreen()
             print(f"Animation time: {i/animation_speed:.2f}/{frames/animation_speed}s Real time: {i*animation_speed/60:.2f}/{anim_time/60:.2f}min")
     ani = FuncAnimation(fig, animate, frames=frames, interval=interval, repeat=False)
-    plt.show()
+    if not export_gif_path: plt.show()
+    else:
+        writergif = PillowWriter(fps=30) 
+        ani.save(export_gif_path, writer=writergif)
     return
 
 
