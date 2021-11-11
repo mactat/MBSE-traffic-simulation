@@ -25,6 +25,16 @@ results, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inf
 scheduler.safe_to_file("sim1")
 ```
 
+## Reusing scheduler object
+
+```python
+scheduler.num_of_lanes = 3
+scheduler.average_drivers_mood = 0.97
+scheduler.reset()
+results2, results_dict2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
+scheduler.safe_to_file("sim1")
+```
+
 ## Visualizing output
 
 ```python
@@ -40,14 +50,35 @@ createAnimation(
     )
 
 ```
-
 ## Results
+As a results simulator is evaluating number of cars which were able to pass the highway:
 
-**Basecases**
+```
+Animation time: 23.90/24.0s Real time: 3.98/4.00min
+Results: 13/60
+```
+
+## Functions of the simulator
+
+**Basecases(overtaking, changing lanes)**
 
 ![basecase](/static/basecase.gif)
 
-**Other**
+**Basic simulation**
 
 ![testcase](/static/testcase.gif)
+
+**Changing speed of simulation**
+
+![testcase](/static/speed.gif)
+
+**Changing number of lanes**
+
+![testcase](/static/num_of_lanes.gif)
+
+**Comparing different simulations**
+
+![testcase](/static/multiple.gif)
+
+
 

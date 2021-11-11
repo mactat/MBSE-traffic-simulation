@@ -2,6 +2,7 @@ from sim import *
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.animation import PillowWriter
+import matplotlib
 import numpy as np
 import os
 import json
@@ -36,9 +37,10 @@ def dictToData(results):
     # sample is a dict which contains informations about state of the lanes
     # key is a lane number , value is a dict which contains cars in form car.num:car.position
 
-    X=[[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] for sample in results.values()]
-    Y=[[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
-    colors = [[car_num for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
+    X =      [[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] for sample in results.values()]
+    Y =      [[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
+    colors = [[int(car_num) % 10 for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
+
     return X,Y,colors
 
 def lower_samples(sample_list, multiple):
@@ -62,9 +64,9 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
     size_adj = num_of_lanes[0]/100
     plt.subplots_adjust(bottom=(0.4-size_adj),top=(0.6+size_adj))
     plt.set_cmap('gist_rainbow')
+    cmap = matplotlib.cm.get_cmap('tab10')
     manager = plt.get_current_fig_manager()
     #manager.full_screen_toggle()
-    colormap = np.array(['skyblue','b','y','g','r'])
     interval = int(1000/animation_speed)
     frames = int(anim_time/reduce_data)
 
@@ -75,7 +77,10 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
             c = colors_list[j][i]
             ax[j][0].clear()
             for k in range(num_of_lanes[j]-1): ax[j][0].axhline(0.5 + k, linestyle='--', color='white')
-            ax[j][0].scatter(x, y, marker="s",s=100/num_of_lanes[j],alpha=0.9,c=c)#c=colormap[np.array(y)])
+
+            for z in range(len(x)):
+                ax[j][0].scatter(x[z], y[z], marker="s",s=100/num_of_lanes[j],alpha=0.9,c=[cmap(c[z])])
+
             ax[j][0].set_xlim([0,highway_length* 1000]) #10km
             ax[j][0].set_ylim([-1,num_of_lanes[j]])
             # ax[j].set_title(f"sim {j}")
