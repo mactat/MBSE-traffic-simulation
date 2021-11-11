@@ -42,9 +42,11 @@ createAnimation(
 
 ## Results
 
-*Basecases*
+**Basecases**
+
 ![basecase](/static/basecase.gif)
 
-*Other*
+**Other**
+
 ![testcase](/static/testcase.gif)
 
