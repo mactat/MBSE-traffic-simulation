@@ -42,5 +42,9 @@ createAnimation(
 
 ## Results
 
-![example](/static/sim1.png)
+*Basecases*
+![basecase](/static/basecase.gif)
+
+*Other*
+![testcase](/static/testcase.gif)
 
