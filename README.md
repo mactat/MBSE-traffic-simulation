@@ -31,11 +31,12 @@ scheduler.safe_to_file("sim1")
 from animation import createAnimation
 
 createAnimation(
-    [results_dict1],                # results from simulation - multiple can provided for compering simulations
-    animation_speed= 20,            # animation speed
-    reduce_data = 1,                # howmuch reduce the data, usefull in large datasets
-    highway_length=highway_length,  # length in kilometers
-    num_of_lanes=[num_of_lanes]     
+    [results_dict1],                           # results from simulation - multiple can provided for compering simulations
+    animation_speed= 20,                       # animation speed
+    reduce_data = 1,                           # howmuch reduce the data, usefull in large datasets
+    highway_length=highway_length,             # length in kilometers
+    num_of_lanes=[num_of_lanes],
+    export_gif_path = "../static/testcase.gif" #if not provided, animation will be shown in the form of plot
     )
 
 ```
