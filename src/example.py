@@ -17,30 +17,30 @@ scheduler = Scheduler(
                         step_time = 1) # in sec
 
 # # ========================= Base cases ============================
-results, results_dict1 = scheduler.sim_lane_changing(sim_time,change_lane=False)
-scheduler.reset()
-results, results_dict2 = scheduler.sim_lane_changing(sim_time,change_lane=True)
-scheduler.reset()
-results, results_dic3 = scheduler.sim_lane_changing(sim_time,change_lane=True,overtake=True)
-scheduler.reset()
+# results, results_dict1 = scheduler.sim_lane_changing(sim_time,change_lane=False)
+# scheduler.reset()
+# results, results_dict2 = scheduler.sim_lane_changing(sim_time,change_lane=True)
+# scheduler.reset()
+# results, results_dic3 = scheduler.sim_lane_changing(sim_time,change_lane=True,overtake=True)
+# scheduler.reset()
 
-createAnimation(
-    [results_dict1,results_dict2,results_dic3],
-    animation_speed= 10,
-    reduce_data = 3,
-    highway_length=highway_length,
-    num_of_lanes=[num_of_lanes,num_of_lanes,num_of_lanes],
-    export_gif_path = "../static/basecase.gif"
-   )
+# createAnimation(
+#     [results_dict1,results_dict2,results_dic3],
+#     animation_speed= 10,
+#     reduce_data = 3,
+#     highway_length=highway_length,
+#     num_of_lanes=[num_of_lanes,num_of_lanes,num_of_lanes],
+#     export_gif_path = "../static/basecase.gif"
+#    )
 
 # ======================= More complicated ====================
 
-highway_length = 1
-num_of_lanes = 5
+highway_length = 2
+num_of_lanes = 7
 average_drivers_mood = 0.85 #
-sim_time = 10
-inflow = 8 #cars per minute
-speed_limit = 80
+sim_time = 4
+inflow = 15 #cars per minute
+speed_limit = 90
 
 scheduler = Scheduler(
                         average_drivers_mood = average_drivers_mood ,
@@ -52,13 +52,20 @@ scheduler = Scheduler(
 results, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 scheduler.safe_to_file("sim1")
 
+
+scheduler.num_of_lanes = 3
+scheduler.average_drivers_mood = 0.97
+scheduler.reset()
+results2, results_dict2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
+scheduler.safe_to_file("sim1")
+
 createAnimation(
-    [results_dict1],
-    animation_speed= 10,
+    [results_dict1,results_dict2],
+    animation_speed = 10,
     reduce_data = 1,
     highway_length=highway_length,
-    num_of_lanes=[num_of_lanes],
-    export_gif_path = "../static/testcase.gif" #if not provided, animation will be shown in the form of plot
+    num_of_lanes=[num_of_lanes,scheduler.num_of_lanes],
+    export_gif_path = "../static/multiple.gif" #if not provided, animation will be shown in the form of plot
     )
 
 print(f"Results: {results}/{(sim_time)*inflow}")
