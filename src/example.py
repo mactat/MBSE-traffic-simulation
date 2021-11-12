@@ -65,7 +65,7 @@ createAnimation(
     reduce_data = 1,
     highway_length=highway_length,
     num_of_lanes=[num_of_lanes,scheduler.num_of_lanes],
-    export_gif_path = "../static/multiple.gif" #if not provided, animation will be shown in the form of plot
+ #   export_gif_path = "../static/multiple.gif" #if not provided, animation will be shown in the form of plot
     )
 
 print(f"Results: {results}/{(sim_time)*inflow}")
