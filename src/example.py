@@ -5,6 +5,37 @@ from animation import *
 This example shows how to run the simulation along with animation
 '''
 
+# ====================== examples =====================
+highway_length = 7
+num_of_lanes = 4
+average_drivers_mood = 0.85 #
+sim_time = 20
+inflow = 4 #cars per minute
+speed_limit = 60
+scheduler = Scheduler(
+                        average_drivers_mood = average_drivers_mood ,
+                        num_of_lanes = num_of_lanes, 
+                        highway_length = highway_length, 
+                        speed_limit = speed_limit, #in km/h
+                        step_time = 1) # in sec
+
+# # ========================= Base cases ============================
+results, results_dict1 = scheduler.sim_lane_changing(sim_time,change_lane=False)
+scheduler.reset()
+results, results_dict2 = scheduler.sim_lane_changing(sim_time,change_lane=True)
+scheduler.reset()
+results, results_dic3 = scheduler.sim_lane_changing(sim_time,change_lane=True,overtake=True)
+scheduler.reset()
+
+createAnimation(
+    [results_dict1,results_dict2,results_dic3],
+    animation_speed= 10,
+    reduce_data = 3,
+    highway_length=highway_length,
+    num_of_lanes=[num_of_lanes,num_of_lanes,num_of_lanes]
+   )
+
+# ======================= More complicated ====================
 
 highway_length = 1
 num_of_lanes = 3
@@ -41,6 +72,7 @@ createAnimation(
     num_of_lanes=[num_of_lanes, num_of_lanes, num_of_lanes],
     export_gif_path = "../static/autonomous2.gif" #if not provided, animation will be shown in the form of plot
     )
+
 
 print(f"Results without autonomous vehicles:\nFlow: {results1}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed1:.1f}/{speed_limit} km/h.\n")
 print(f"Results with only autonomous vehicles:\nFlow: {results2}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed2:.1f}/{speed_limit} km/h.\n")

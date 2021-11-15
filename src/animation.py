@@ -40,7 +40,6 @@ def dictToData(results):
     X =      [[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] for sample in results.values()]
     Y =      [[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
     colors = [[int(car_num) % 10 for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
-
     return X,Y,colors
 
 def lower_samples(sample_list, multiple):

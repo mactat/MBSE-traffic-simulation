@@ -29,6 +29,74 @@ class Scheduler:
     def update_average_speed(self,speed):
         self.samples += 1
         self.average_speed = (self.average_speed * (self.samples - 1) + speed)/self.samples
+    # simple simulation with one car
+    def sim_with_two_car(self, time_of_sim):
+        slow_car = Car(50 * 1000 / 3600, lane=1, number=self.in_car_counter)
+        slow_car.driver.mood = 1
+        self.highway.lanes[1].add_car(slow_car)
+        self.in_car_counter += 1
+        for i in range(10): self.step()
+        self.highway.lanes[1].add_car(Car(60 * 1000 / 3600,
+                                          lane=1,
+                                          number=self.in_car_counter))
+        self.in_car_counter += 1
+        # self.add_cars(1)
+        # for i in range(10): self.step()
+        # self.add_cars(1)
+        return self.simulate(time_of_sim, 0)
+
+    def sim_with_entry_ramp(self, time_of_sim):
+        car = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+        car.driver.mood = 1
+        self.highway.lanes[1].add_car(car)
+        self.in_car_counter += 1
+        for i in range(10): self.step()
+        self.highway.lanes[1].add_car(Car(60*1000/3600,
+                                                lane=1,
+                                                number=self.in_car_counter))
+        self.in_car_counter += 1
+        # self.add_cars(1)
+        # for i in range(10): self.step()
+        # self.add_cars(1)
+        return self.simulate(time_of_sim,0)
+
+    def sim_lane_changing(self, time_of_sim, change_lane=False, overtake = False):
+  
+        if not change_lane and not overtake:
+
+            car1 = Car(50*1000/3600,lane=0, number=self.in_car_counter)
+            car1.driver.mood = 1
+            self.in_car_counter += 1
+            car2 = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+            car2.driver.mood = 1
+            self.in_car_counter += 1
+
+            self.highway.lanes[0].add_car(car1)
+            self.highway.lanes[1].add_car(car2)
+
+        if change_lane and not overtake:
+            car1 = Car(55*1000/3600,lane=0, number=self.in_car_counter)
+            car1.driver.mood = 1
+            self.in_car_counter += 1
+            car2 = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+            car2.driver.mood = 0.9
+            self.in_car_counter += 1
+            self.highway.lanes[0].add_car(car1)
+            self.highway.lanes[1].add_car(car2)
+
+        if overtake:
+            car1 = Car(55*1000/3600,lane=0, number=self.in_car_counter)
+            car1.driver.mood = 1
+            self.in_car_counter += 1
+            car2 = Car(60*1000/3600,lane=0, number=self.in_car_counter)
+            car2.driver.mood = 0.9
+            self.in_car_counter += 1
+
+            self.highway.lanes[0].add_car(car1)
+            for i in range(10): self.step()
+            self.highway.lanes[0].add_car(car2)
+
+        return self.simulate(time_of_sim-10,0)
 
     # single step which has to be executed in every refresh of the sim
     def step(self):
