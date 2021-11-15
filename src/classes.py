@@ -42,9 +42,18 @@ class Driver:
 
         # check if switching lane is possible
         switch_lane = self.switch_lanes(left_back, right_back, left_front, right_front)
+        #Variables for (de)acceleration
+        # *Delta v = Difference in speed of car infront and current car
+        # * t = reaction time
+        # * s0 = Desired minimum distance between cars
+        # * si = Distance to car in front
+        # * v = Current speed of car
+        # * ai = Max acceleration of car, taken from average acceleration in m/s^2 of cars
+        # * b = Comfortable deaccleration of car, taken from google search
+        # * v0 = desired speed of car, set as the speed limit
         deltav = self.current_speed - self.frontSpeed
         t = self.reaction_time
-        s0 = 5
+        s0 = 3
         si = self.front
         v = self.current_speed
         ai = 3.6
@@ -56,7 +65,7 @@ class Driver:
                 action = "change_lane"
                 params = {"direction": switch_lane}
             else:
-                a = ai * (1 - (v / v0) ** 3) - ai * (
+                a = ai * (1 - (v / v0) ** 4) - ai * (
                             ((s0 + v * t) / si) + ((v * deltav) / (2 * si * math.sqrt(ai * b)))) ** 2
 
                 adjust = (self.current_speed - self.front / 1) + 10  # adjust
@@ -67,7 +76,7 @@ class Driver:
         elif (self.front > self.speed_limit + 20 and self.random_mood() > self.mood):
             # to be changed to real formula
             adjust = 0.1 * self.speed_limit / 3.6
-            a = ai * (1-(v/v0)**3) - ai * (((s0+v*t)/si)+((v*deltav)/(2*si*math.sqrt(ai*b))))**2
+            a = ai * (1-(v/v0)**4)
 
             #if (self.frontSpeed <=0):
               #  a = 3.6 * 1 - (self.current_speed / self.speed_limit)**3 + -3.6 * ((3 + self.current_speed * self.reaction_time) / self.frontSpeed +
@@ -127,7 +136,7 @@ class Car:
 
         if action == 'brake':
             self.current_speed += params["value"]
-            if(self.current_speed  >= 0):
+            if(self.current_speed  <= 0):
                 self.current_speed = 0
 
         if action == 'change_lane':
