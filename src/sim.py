@@ -2,6 +2,7 @@ from numpy.lib.function_base import average
 from classes import  *
 import json
 import random
+import pickle
 
 '''
 That class in the main brain of the simulation.
@@ -127,10 +128,21 @@ class Scheduler:
         for lane in self.highway.lanes:
             state[lane.no] = { car.number:car.position for car in lane.cars }
         return state
-    def safe_to_file(self, filename):
+    def safe_results_to_file(self, filename):
         out_file = open(f"{ filename }.json", "w") 
         json.dump(self.cumulative_results, out_file, indent = 6) 
         out_file.close() 
+    def safe_to_file(self, filepath="scheduler.pkl"):
+        with open(filepath, 'wb') as file:  # Overwrites any existing file.
+            pickle.dump(self, file)
+            print(f"Scheduler saved to {filepath}")
+            
+    @staticmethod        
+    def load_from_file(filepath="scheduler.pkl"):
+        with open(filepath, 'rb') as file:  # Overwrites any existing file.
+            scheduler = pickle.load(file)
+            print(f"Scheduler loaded from {filepath}")
+        return scheduler
 
     def reset(self):
         self.highway = Highway(speed_limit = self.speed_limit, no_lanes = self.num_of_lanes, length = self.length)
