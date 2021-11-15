@@ -27,12 +27,35 @@ scheduler.safe_to_file("sim1")
 
 ## Reusing scheduler object
 
+
 ```python
 scheduler.num_of_lanes = 3
 scheduler.average_drivers_mood = 0.97
 scheduler.reset()
 results2, results_dict2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
-scheduler.safe_to_file("sim1")
+
+```
+## Exporting data
+
+**Exporting only data**
+
+After simulation data can be safed in form f a json file:
+
+```python
+scheduler.safe_to_file("sim1.json")
+```
+
+**Exporting whole scheduler**
+
+Scheduler can be aslo exported and imported(both data and parameters of an objects)
+
+```python
+scheduler.safe_to_file("test.pkl")
+```
+
+**Importing scheduler**
+```python
+scheduler1 = Scheduler.load_from_file("test.pkl")
 ```
 
 ## Visualizing output
