@@ -53,7 +53,7 @@ class Driver:
         # * v0 = desired speed of car, set as the speed limit
         deltav = self.current_speed - self.frontSpeed
         t = self.reaction_time
-        s0 = 3
+        s0 = 5
         si = self.front
         v = self.current_speed
         ai = 3.6
@@ -73,7 +73,7 @@ class Driver:
                 action = "brake"
                 params = {"value": a}
 
-        elif (self.front > self.speed_limit + 20 and self.random_mood() > self.mood):
+        elif (self.front > 20 and self.random_mood() > self.mood - 0.1):
             # to be changed to real formula
             adjust = 0.1 * self.speed_limit / 3.6
             a = ai * (1-(v/v0)**4)
