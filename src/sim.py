@@ -25,9 +25,24 @@ class Scheduler:
 
     # simple simulation with one car
     def sim_with_two_car(self, time_of_sim):
-        slow_car = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+        slow_car = Car(50 * 1000 / 3600, lane=1, number=self.in_car_counter)
         slow_car.driver.mood = 1
         self.highway.lanes[1].add_car(slow_car)
+        self.in_car_counter += 1
+        for i in range(10): self.step()
+        self.highway.lanes[1].add_car(Car(60 * 1000 / 3600,
+                                          lane=1,
+                                          number=self.in_car_counter))
+        self.in_car_counter += 1
+        # self.add_cars(1)
+        # for i in range(10): self.step()
+        # self.add_cars(1)
+        return self.simulate(time_of_sim, 0)
+
+    def sim_with_entry_ramp(self, time_of_sim):
+        car = Car(50*1000/3600,lane=1, number=self.in_car_counter)
+        car.driver.mood = 1
+        self.highway.lanes[1].add_car(car)
         self.in_car_counter += 1
         for i in range(10): self.step()
         self.highway.lanes[1].add_car(Car(60*1000/3600,

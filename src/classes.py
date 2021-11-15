@@ -141,12 +141,19 @@ class Lane:
     # For now assuming that all the cars are commin from the beggining of the highway
     # Later it has to be changed to allow entering cars from the side of the highway    
     def add_car(self,car: Car):
-        #check if list is emty or the first car is not on initial position
+        #check if list is empty or the first car is not on initial position
         if not self.cars or self.cars[0].position != 0 : 
             car.lane = self.no
             self.cars.insert(0, car)
             return True
         else: return False
+
+# Entry ramp where switch is the dsitance it takes before the entry ramp end where cars can switch lane
+class EntryLane(Lane):
+    def __init__(self, no, length, switch):
+        super().__init__(no, length)
+        switch = switch
+
 
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):
@@ -155,6 +162,11 @@ class Highway:
         self.no_lanes = no_lanes
         self.lanes = [Lane(no = i,length = self.length) for i in range(no_lanes)]
         self.speed_limit = speed_limit
+
+    def add_entryramp(self, length, switch):
+        self.no_lanes += 1
+        self.lanes = EntryLane(self.no_lanes, length, switch)
+
     def render(self):
         for lane in self.lanes:
             for car in lane.cars:

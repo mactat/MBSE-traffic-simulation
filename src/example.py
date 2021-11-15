@@ -1,6 +1,6 @@
 from sim import *
 from animation import *
-
+"""
 # ====================== examples =====================
 highway_length = 7
 num_of_lanes = 4
@@ -8,7 +8,25 @@ average_drivers_mood = 0.85 #
 sim_time = 20
 inflow = 4 #cars per minute
 speed_limit = 60
+scheduler = Scheduler(
+                        average_drivers_mood = average_drivers_mood ,
+                        num_of_lanes = num_of_lanes,
+                        highway_length = highway_length,
+                        speed_limit = speed_limit, #in km/h
+                        step_time = 1) # in sec
 
+
+
+
+
+"""
+# ====================== examples =====================
+highway_length = 7
+num_of_lanes = 4
+average_drivers_mood = 0.85 #
+sim_time = 20
+inflow = 4 #cars per minute
+speed_limit = 60
 scheduler = Scheduler(
                         average_drivers_mood = average_drivers_mood ,
                         num_of_lanes = num_of_lanes, 
@@ -29,8 +47,7 @@ createAnimation(
     animation_speed= 10,
     reduce_data = 3,
     highway_length=highway_length,
-    num_of_lanes=[num_of_lanes,num_of_lanes,num_of_lanes],
-    export_gif_path = "../static/basecase.gif"
+    num_of_lanes=[num_of_lanes,num_of_lanes,num_of_lanes]
    )
 
 # ======================= More complicated ====================
@@ -57,8 +74,7 @@ createAnimation(
     animation_speed= 10,
     reduce_data = 1,
     highway_length=highway_length,
-    num_of_lanes=[num_of_lanes],
-    export_gif_path = "../static/testcase.gif" #if not provided, animation will be shown in the form of plot
-    )
+    num_of_lanes=[num_of_lanes]
+)
 
 print(f"Results: {results}/{(sim_time)*inflow}")
