@@ -50,14 +50,14 @@ scheduler = Scheduler(
                         step_time = 1) # in sec
 
 results, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
-scheduler.safe_to_file("sim1")
+scheduler.safe_to_file("sim1.json")
 
 
 scheduler.num_of_lanes = 3
 scheduler.average_drivers_mood = 0.97
 scheduler.reset()
 results2, results_dict2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
-scheduler.safe_to_file("sim1")
+scheduler.safe_to_file("sim1.json")
 
 createAnimation(
     [results_dict1,results_dict2],
