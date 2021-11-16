@@ -116,6 +116,29 @@ class Car:
             return True
         return False
 
+'''
+Truck class 
+'''
+class Truck(Car):
+    def __init__(self, initial_speed, lane,drivers_mood=0.95,number = 0, acc = 0, breaking = 0):
+        self.driver = Driver(reaction_time=0, mood = drivers_mood)
+        # In meters from the start of the highway
+        self.position = 0
+        self.number = number
+
+        # Assumption still holds
+        self.size = 0
+
+        # Setter would be better
+        self.lane = lane
+        self.acc = acc
+
+        #In m/s
+        self.current_speed = initial_speed * 0.75 # A way to limit truck speed to 75% of car?  
+        self.desired_speed = initial_speed
+        self.breaking = breaking * 0.75 # A way to indicate that a truck speeds slower? 
+    
+
 
 '''
 This will be implemented later as it is car with communication device.
@@ -137,6 +160,7 @@ class Lane:
         self.length = length
         # important, it has to be sorted array
         self.cars = []
+        self.trucks = []
 
     # For now assuming that all the cars are commin from the beggining of the highway
     # Later it has to be changed to allow entering cars from the side of the highway    
@@ -148,6 +172,16 @@ class Lane:
             return True
         else: return False
 
+    # For now assuming that all the Truck are commin from the start
+    # change to allow sidelines
+    def add_truck(self,truck: Truck):
+        #check if list is emty or the first TRUCK is not on initial position
+        if not self.trucks or self.trucks[0].position != 0 : 
+            truck.lane = self.no
+            self.trucks.insert(0, truck)
+            return True
+        else: return False
+
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):
         #In meters!
@@ -155,14 +189,21 @@ class Highway:
         self.no_lanes = no_lanes
         self.lanes = [Lane(no = i,length = self.length) for i in range(no_lanes)]
         self.speed_limit = speed_limit
+
     def render(self):
         for lane in self.lanes:
             for car in lane.cars:
                 if(car.lane != lane.no):
                     lane.cars.remove(car)
                     self.lanes[car.lane].cars.append(car)
-        
-        for lane in self.lanes: lane.cars.sort(key=lambda car:car.position)
+            for truck in lane.trucks:
+                if(truck.lane != lane.no):
+                    lane.trucks.remove(truck)
+                    self.lanes[truck.lane].trucks.append(truck)        
+            
+        for lane in self.lanes: 
+            lane.cars.sort(key=lambda car:car.position)
+            lane.trucks.sort(key=lambda car:car.position)
     
     # Returns car env position in a form of distance to front, left_front, left_back, right_front, right_back car
     # [              *<------+->*           ]

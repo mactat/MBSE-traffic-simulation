@@ -23,6 +23,8 @@ class Scheduler:
         self.actual_time = 0
         self.in_car_counter = 0
         self.cars_passed = 0
+        self.trucks_passed = 0
+        self.in_truck_counter = 0
 
     # simple simulation with one car
     def sim_with_two_car(self, time_of_sim):
@@ -101,6 +103,7 @@ class Scheduler:
 
     def choose_speed(self):    
         return random.gauss(self.speed_limit/2, 0.1*self.speed_limit) 
+
     #add new cars to the map
     def add_cars(self,num=1):  
         for i in range(num):
@@ -110,6 +113,17 @@ class Scheduler:
                                                 number=self.in_car_counter,
                                                 drivers_mood=random.gauss(self.average_drivers_mood, 0.05)))
             if added: self.in_car_counter += 1
+
+        #add new cars to the map
+    def add_trucks(self,num=1):  
+        for i in range(num):
+            rand_lane = random.randint(0,self.num_of_lanes-1)
+            added = self.highway.lanes[rand_lane].add_truck(Truck(self.choose_speed()*1000/3600,
+                                                lane=rand_lane,
+                                                number=self.in_truck_counter,
+                                                drivers_mood=random.gauss(self.average_drivers_mood, 0.05)))
+            if added: self.in_truck_counter += 1
+
     # executin multiple steps
     def simulate(self, time_of_sim, inflow):
         time_of_sim = time_of_sim * 60 # to seconds
@@ -149,6 +163,7 @@ class Scheduler:
         self.cumulative_results = {}
         self.actual_time = 0
         self.cars_passed = 0
+        self.trucks_passed = 0
 
 # Debugging
 # inflow = 3 #cars per minute
