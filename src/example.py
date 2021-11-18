@@ -7,11 +7,11 @@ This example shows how to run the simulation along with animation
 
 
 highway_length = 1
-num_of_lanes = 5
-average_drivers_mood = 0.90 #
-sim_time = 3
-inflow = 60 #cars per minute
-speed_limit = 90
+num_of_lanes = 2
+average_drivers_mood = 0.99 #
+sim_time = 4
+inflow = 30 #cars per minute
+speed_limit = 110
 
 scheduler = Scheduler(
                         average_drivers_mood = average_drivers_mood ,
@@ -21,17 +21,17 @@ scheduler = Scheduler(
                         step_time = 1) # in sec
 
 # Only normal cars
-results1, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
+results1, results_dict1, average_speed1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
 # Only outonomous cars
 scheduler.propotion_of_autonomous = 1
 scheduler.reset()
-results2, results_dict2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
+results2, results_dict2, average_speed2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
 # 50/50
 scheduler.propotion_of_autonomous = 0.5
 scheduler.reset()
-results3, results_dict3 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
+results3, results_dict3, average_speed3 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
 createAnimation(
     [results_dict1, results_dict2, results_dict3],
@@ -39,9 +39,9 @@ createAnimation(
     reduce_data = 1,
     highway_length=highway_length,
     num_of_lanes=[num_of_lanes, num_of_lanes, num_of_lanes],
-    export_gif_path = "../static/autonomous.gif" #if not provided, animation will be shown in the form of plot
+    export_gif_path = "../static/autonomous2.gif" #if not provided, animation will be shown in the form of plot
     )
 
-print(f"Results without autonomous: {results1}/{(sim_time)*inflow}")
-print(f"Results with only autonomous: {results2}/{(sim_time)*inflow}")
-print(f"Results with 50/50: {results3}/{(sim_time)*inflow}")
+print(f"Results without autonomous vehicles:\nFlow: {results1}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed1:.1f}/{speed_limit} km/h.\n")
+print(f"Results with only autonomous vehicles:\nFlow: {results2}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed2:.1f}/{speed_limit} km/h.\n")
+print(f"Results with 50/50 autonomous vehicles:\nFlow: {results3}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed3:.1f}/{speed_limit} km/h.\n")

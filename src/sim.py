@@ -23,6 +23,12 @@ class Scheduler:
         self.actual_time = 0
         self.in_car_counter = 0
         self.cars_passed = 0
+        self.samples = 0
+        self.average_speed = 0
+
+    def update_average_speed(self,speed):
+        self.samples += 1
+        self.average_speed = (self.average_speed * (self.samples - 1) + speed)/self.samples
 
     # single step which has to be executed in every refresh of the sim
     def step(self):
@@ -32,9 +38,9 @@ class Scheduler:
         # Decide on action
         for lane_ind,lane in enumerate(self.highway.lanes):
             for car_ind,car in enumerate(lane.cars):
-
                 # Gateher info about car env
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
+                self.update_average_speed(car.current_speed)
                 # Make changes in car, as speed, changing lane, etc based on env
                 car.driver_decide(self.step_time,car_env)
 
@@ -87,7 +93,7 @@ class Scheduler:
             #update map
             self.step()
             if(inflow and self.actual_time%(int(60/inflow)) == 0): self.add_vehicles()
-        return self.cars_passed, self.cumulative_results
+        return self.cars_passed, self.cumulative_results, self.average_speed * 3.6
         
     def get_cumulative_state(self):
         return self.cumulative_results
@@ -95,15 +101,15 @@ class Scheduler:
     def get_random_vehicle(self, lane):
         vehicle_type = np.random.choice([Car, AutonomousCar], 1, p=[1-self.propotion_of_autonomous,self.propotion_of_autonomous])
         if vehicle_type == Car:
-            return Car(self.choose_speed()*1000/3600,
-                        lane=lane,
-                        number=self.in_car_counter,
-                        drivers_mood=random.gauss(self.average_drivers_mood, 0.05))
+            return Car(self.choose_speed(),
+                        lane = lane,
+                        number = self.in_car_counter,
+                        drivers_mood = random.gauss(self.average_drivers_mood, 0.05))
         elif vehicle_type == AutonomousCar:
-            return AutonomousCar(self.choose_speed()*1000/3600,
-                                    lane=lane,
-                                    number=self.in_car_counter,
-                                    drivers_mood=0,
+            return AutonomousCar(self.choose_speed(),
+                                    lane = lane,
+                                    number = self.in_car_counter,
+                                    drivers_mood = 0,
                                     radius = 1000, 
                                     delay = 0)
     def get_state(self):
