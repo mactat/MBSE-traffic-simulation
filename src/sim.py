@@ -19,7 +19,7 @@ class Scheduler:
         #fix it later
         self.step_time = step_time # in seconds
         self.highway = Highway(speed_limit = self.speed_limit, no_lanes = self.num_of_lanes, length = self.length)
-        self.cumulative_results = {}
+        self.cumulative_results = {"Time":{}}
         self.actual_time = 0
         self.in_car_counter = 0
         self.cars_passed = 0
@@ -94,9 +94,11 @@ class Scheduler:
                     self.cars_passed += 1
 
         self.highway.render()
-        #gather the results
+
+        #gather the results    
         state = self.get_state()
-        self.cumulative_results[self.actual_time] = state
+        self.cumulative_results["Time"][self.actual_time] = state
+
         return self.cars_passed,state
 
     def choose_speed(self):    
@@ -124,10 +126,19 @@ class Scheduler:
         return self.cumulative_results
 
     def get_state(self):
-        state = {}
+        state ={"Lanes":{},"sim_state":{}}
         for lane in self.highway.lanes:
-            state[lane.no] = { car.number:car.position for car in lane.cars }
+               state["Lanes"][lane.no] =      { "IDs":{vechile.number:{     
+                                                   "type":vechile.position,  # TODO: Fix when type is introduced 
+                                                   "position":vechile.position, 
+                                                   "speed":"speed",        # Include speed
+                                                   "color":"color" }}  # TODO: Make color dependent on car type 
+                                                   for vechile in lane.cars }
+
+        state["sim_state"] = {"cars_passed":self.cars_passed}
+
         return state
+
     def safe_results_to_file(self, filename):
         out_file = open(f"{ filename }.json", "w") 
         json.dump(self.cumulative_results, out_file, indent = 6) 
@@ -146,7 +157,7 @@ class Scheduler:
 
     def reset(self):
         self.highway = Highway(speed_limit = self.speed_limit, no_lanes = self.num_of_lanes, length = self.length)
-        self.cumulative_results = {}
+        self.cumulative_results = {"Time":{}}
         self.actual_time = 0
         self.cars_passed = 0
 
