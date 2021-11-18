@@ -1,3 +1,4 @@
+[![Build Status](https://dev.azure.com/s202609/Other/_apis/build/status/MBSE-traffic-simulation?branchName=master)](https://dev.azure.com/s202609/Other/_build/latest?definitionId=9&branchName=master)
 # MBSE-traffic-simulation
 
 Simple traffic simulator.
