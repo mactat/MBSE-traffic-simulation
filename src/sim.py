@@ -46,6 +46,8 @@ class Scheduler:
         return self.simulate(time_of_sim, 0)
 
     def sim_with_entry_ramp(self, time_of_sim):
+        self.highway.add_entrylane(1000, 1000*0.5)
+        print(self.highway.lanes)
         car = Car(50*1000/3600,lane=1, number=self.in_car_counter)
         car.driver.mood = 1
         self.highway.lanes[1].add_car(car)
@@ -105,6 +107,8 @@ class Scheduler:
 
         # Decide on action
         for lane_ind,lane in enumerate(self.highway.lanes):
+            print(type(lane_ind))
+            print(type(lane))
             for car_ind,car in enumerate(lane.cars):
                 # Gateher info about car env
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
