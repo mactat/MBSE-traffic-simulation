@@ -7,10 +7,10 @@ This example shows how to run the simulation along with animation
 
 
 highway_length = 1
-num_of_lanes = 2
-average_drivers_mood = 0.99 #
-sim_time = 4
-inflow = 30 #cars per minute
+num_of_lanes = 3
+average_drivers_mood = 0.90 #
+sim_time = 2
+inflow = 40 #cars per minute
 speed_limit = 110
 
 scheduler = Scheduler(

@@ -141,3 +141,5 @@ class Scheduler:
         self.cumulative_results = {}
         self.actual_time = 0
         self.cars_passed = 0
+        self.average_speed = 0
+        self.samples = 0
