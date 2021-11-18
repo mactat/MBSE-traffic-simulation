@@ -40,8 +40,7 @@ class Scheduler:
         return self.simulate(time_of_sim, 0)
 
     def sim_with_entry_ramp(self, time_of_sim):
-        self.highway.add_entrylane(1000, 1000*0.5)
-        print(self.highway.lanes)
+        self.highway.add_entrylane(1000, 1000)
         car = Car(50*1000/3600,lane=1, number=self.in_car_counter)
         car.driver.mood = 1
         self.highway.lanes[1].add_car(car)
@@ -51,9 +50,14 @@ class Scheduler:
                                                 lane=1,
                                                 number=self.in_car_counter))
         self.in_car_counter += 1
-        # self.add_cars(1)
-        # for i in range(10): self.step()
-        # self.add_cars(1)
+        car2 = Car(50 * 1000 / 3600, lane=1, number=self.in_car_counter)
+        car2.driver.mood = 1
+        self.in_car_counter += 1
+        self.highway.lanes[4].add_car(car2)
+        car3 = Car(50 * 1000 / 3600, lane=1, number=self.in_car_counter)
+        car3.driver.mood = 1
+        self.in_car_counter += 1
+        self.highway.lanes[0].add_car(car3)
         return self.simulate(time_of_sim,0)
 
     def sim_lane_changing(self, time_of_sim, change_lane=False, overtake = False):
@@ -100,8 +104,6 @@ class Scheduler:
         #update map
         self.actual_time += 1
         for lane_ind,lane in enumerate(self.highway.lanes):
-            print(type(lane_ind))
-            print(type(lane))
             for car_ind,car in enumerate(lane.cars):
                 # gateher info about car env
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
