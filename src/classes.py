@@ -32,9 +32,9 @@ class Driver:
     #  * Take an exit
     def random_mood(self):
         return random()
+
     def choose_action(self,car_env):
         self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front = car_env
-        
         #check if switching lane is possible
         switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
         if(self.current_speed*1 > self.front):
@@ -148,7 +148,7 @@ class Lane:
             return True
         else: return False
 
-# Entry ramp where switch is the dsitance it takes before the entry ramp end where cars can switch lane
+# Entry ramp where switch is the distance it takes before the entry ramp end where cars can switch lane
 class EntryLane(Lane):
     def __init__(self, no, length, switch):
         super().__init__(no, length)
@@ -163,9 +163,9 @@ class Highway:
         self.lanes = [Lane(no = i,length = self.length) for i in range(no_lanes)]
         self.speed_limit = speed_limit
 
-    def add_entryramp(self, length, switch):
+    def add_entrylane(self, length, switch):
         self.no_lanes += 1
-        self.lanes = EntryLane(self.no_lanes, length, switch)
+        self.lanes.append(EntryLane(self.no_lanes, length, switch))
 
     def render(self):
         for lane in self.lanes:

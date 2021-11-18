@@ -35,8 +35,9 @@ scheduler = Scheduler(
                         step_time = 1) # in sec
 
 # # ========================= Base cases ============================
-results, results_dict1 = scheduler.sim_lane_changing(sim_time,change_lane=False)
+results, results_dict1 = scheduler.sim_with_entry_ramp(sim_time)
 scheduler.reset()
+"""
 results, results_dict2 = scheduler.sim_lane_changing(sim_time,change_lane=True)
 scheduler.reset()
 results, results_dic3 = scheduler.sim_lane_changing(sim_time,change_lane=True,overtake=True)
@@ -76,5 +77,5 @@ createAnimation(
     highway_length=highway_length,
     num_of_lanes=[num_of_lanes]
 )
-
+"""
 print(f"Results: {results}/{(sim_time)*inflow}")
