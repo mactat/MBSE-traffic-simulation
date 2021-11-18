@@ -111,7 +111,7 @@ Results with only autonomous: 140/160
 Results with 50/50: 74/160
 ```
 
-![testcase](/static/autoonomous.gif)
+![testcase](/static/autonomous.gif)
 
 
 
