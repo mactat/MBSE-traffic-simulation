@@ -17,14 +17,13 @@ class Driver:
     # move it to choose action
     def switch_lanes(self, left_back, right_back, left_front, right_front):  # params here
         rand = self.random_mood()
-        # do we want
-        if (rand > 0.5):
-            if (left_back > self.speed_limit and left_front > 20): return "left"
-        elif (rand < 0.2):
-            if (right_back > self.speed_limit and right_front > 20): return "right"
-        else:
-            return False
-
+        #do we want
+        if(rand > 0.5):
+            if(left_back > self.speed_limit and left_front > 20): return "left"
+        elif(rand < 0.2): 
+            if(right_back > self.speed_limit and right_front > 20): return "right"
+        else: return False
+    
     # Select action based on car env.
     # Action has to be always valid as we are not handeling any other cases
     # Available actions:
@@ -36,7 +35,6 @@ class Driver:
     def random_mood(self):
         return random()
 
-<<<<<<< HEAD
     def choose_action(self, car_env):
         self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, self.frontSpeed = car_env
 
@@ -62,17 +60,18 @@ class Driver:
         ai = 3.6
         b = 3.6
         v0 = self.speed_limit
-
-        if (self.current_speed * 1 > self.front):
-            if switch_lane:
-=======
-    def choose_action(self,car_env):
-        self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front = car_env
-        #check if switching lane is possible
-        switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
-        if(self.current_speed*1 > self.front):
+        if entry:
+            if (left_back > self.speed_limit and left_front > 20):
+                action = "change_lane"
+                params = {"direction": "left"}
+            else:
+                # to be changed to real formula
+                adjust = 0.1 * self.speed_limit / 3.6
+                if (self.current_speed + adjust) > self.speed_limit: adjust = self.speed_limit - self.current_speed
+                action = "accelerate"
+                params = {"value": adjust}
+        elif(self.current_speed*1 > self.front):
             if switch_lane: 
->>>>>>> sim adds entry lane in highway
                 action = "change_lane"
                 params = { "direction": switch_lane }
             else:
@@ -123,9 +122,8 @@ class Car:
     # Driver input for steering the car
     def driver_decide(self, time_elapsed, car_env):
         # chaange the way we define env
-        front, num_of_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed = car_env
-        car_env = front, num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed
-
+        front, num_of_lanes, self.speed_limit,left_back,right_back,left_front,right_front, entry = car_env
+        car_env = front, num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front, entry
         action, params = self.driver.choose_action(car_env)  # should return VALID action and parameters
         
         # Create behaviour based on selected actions
@@ -255,7 +253,6 @@ class Highway:
     '''
     def get_car_env(self, car_ind, lane_ind):
         # every change here require change in drivers class, to be able to handle new data
-
         # front and front speed
         global frontSpeed
         if car_ind < len(self.lanes[lane_ind].cars) - 1:
@@ -301,8 +298,6 @@ class Highway:
         else:
             right_front = 0
             right_back = 0
-        return front, self.no_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed
-        
     # Fetching information from all autonomous cars
     def get_autonomous_car_env(self, car_ind, lane_ind):
         info_pack = [
@@ -314,4 +309,6 @@ class Highway:
                         for vehicle in lane.cars 
                         if type(vehicle) == AutonomousCar]
         return info_pack
-        
+
+
+        return front, self.no_lanes, self.speed_limit,left_back,right_back,left_front,right_front, frontSpeed, type(self.lanes[lane_ind]) is EntryLane

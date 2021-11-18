@@ -4,7 +4,6 @@ from animation import *
 '''
 This example shows how to run the simulation along with animation
 '''
-
 # ====================== examples =====================
 highway_length = 7
 num_of_lanes = 4
@@ -22,7 +21,15 @@ scheduler = Scheduler(
 # # ========================= Base cases ============================
 results, results_dict1 = scheduler.sim_with_entry_ramp(sim_time)
 scheduler.reset()
-"""
+scheduler.safe_to_file("simentry")
+createAnimation(
+    [results_dict1],
+    animation_speed= 10,
+    reduce_data = 3,
+    highway_length=highway_length,
+    num_of_lanes=[num_of_lanes,num_of_lanes,num_of_lanes]
+   )
+
 results, results_dict2 = scheduler.sim_lane_changing(sim_time,change_lane=True)
 scheduler.reset()
 results, results_dic3 = scheduler.sim_lane_changing(sim_time,change_lane=True,overtake=True)
@@ -70,7 +77,6 @@ createAnimation(
     animation_speed = 1,
     reduce_data = 1,
     highway_length=highway_length,
-<<<<<<< HEAD
     num_of_lanes=[num_of_lanes, num_of_lanes, num_of_lanes],
     export_gif_path = "../static/autonomous2.gif" #if not provided, animation will be shown in the form of plot
     )
@@ -79,9 +85,4 @@ createAnimation(
 print(f"Results without autonomous vehicles:\nFlow: {results1}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed1:.1f}/{speed_limit} km/h.\n")
 print(f"Results with only autonomous vehicles:\nFlow: {results2}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed2:.1f}/{speed_limit} km/h.\n")
 print(f"Results with 50/50 autonomous vehicles:\nFlow: {results3}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed3:.1f}/{speed_limit} km/h.\n")
-=======
-    num_of_lanes=[num_of_lanes]
-)
-"""
-print(f"Results: {results}/{(sim_time)*inflow}")
->>>>>>> sim adds entry lane in highway
+
