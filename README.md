@@ -103,5 +103,17 @@ Results: 13/60
 
 ![testcase](/static/multiple.gif)
 
+**Simulation with autonomous cars**
+
+```
+Results without autonomous: 35/160
+Results with only autonomous: 140/160
+Results with 50/50: 74/160
+```
+
+![testcase](/static/autoonomous.gif)
+
+
+
 
 

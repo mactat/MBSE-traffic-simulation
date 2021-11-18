@@ -1,4 +1,5 @@
 from numpy.lib.function_base import average
+import numpy as np
 from classes import  *
 import json
 import random
@@ -10,11 +11,12 @@ It takes all parameters of the simulation and produces output.
 It will be able to perform whole simulation or go step by step by simulation.
 '''
 class Scheduler:
-    def __init__(self,num_of_lanes, highway_length, speed_limit,step_time,average_drivers_mood) -> None:
+    def __init__(self,num_of_lanes, highway_length, speed_limit,step_time, average_drivers_mood, propotion_of_autonomous=0) -> None:
         self.num_of_lanes = num_of_lanes
         self.length = highway_length * 1000 # from km to m
         self.speed_limit = speed_limit*1000/3600
         self.average_drivers_mood = average_drivers_mood
+        self.propotion_of_autonomous = propotion_of_autonomous
 
         #fix it later
         self.step_time = step_time # in seconds
@@ -35,9 +37,9 @@ class Scheduler:
                                                 lane=1,
                                                 number=self.in_car_counter))
         self.in_car_counter += 1
-        # self.add_cars(1)
+        # self.add_vehicles(1)
         # for i in range(10): self.step()
-        # self.add_cars(1)
+        # self.add_vehicles(1)
         return self.simulate(time_of_sim,0)
 
     def sim_lane_changing(self, time_of_sim, change_lane=False, overtake = False):
@@ -85,10 +87,17 @@ class Scheduler:
         self.actual_time += 1
         for lane_ind,lane in enumerate(self.highway.lanes):
             for car_ind,car in enumerate(lane.cars):
+
                 # gateher info about car env
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
+
                 # make changes in car, as speed, changing lane, etc based on env
-                car.refresh(self.step_time,car_env)
+                if type(car) == Car:
+                    car.refresh(self.step_time,car_env)
+                elif type(car) == AutonomousCar:
+                    autonomous_car_env = self.highway.get_autonomous_car_env(car_ind, lane_ind)
+                    car.refresh(self.step_time, car_env, autonomous_car_env)
+
                 if car.position > self.length: 
                     lane.cars.remove(car)
                     self.cars_passed += 1
@@ -101,15 +110,15 @@ class Scheduler:
 
     def choose_speed(self):    
         return random.gauss(self.speed_limit/2, 0.1*self.speed_limit) 
+
     #add new cars to the map
-    def add_cars(self,num=1):  
+    def add_vehicles(self,num=1):  
         for i in range(num):
             rand_lane = random.randint(0,self.num_of_lanes-1)
-            added = self.highway.lanes[rand_lane].add_car(Car(self.choose_speed()*1000/3600,
-                                                lane=rand_lane,
-                                                number=self.in_car_counter,
-                                                drivers_mood=random.gauss(self.average_drivers_mood, 0.05)))
+            rand_vehicle = self.get_random_vehicle(rand_lane)
+            added = self.highway.lanes[rand_lane].add_car(rand_vehicle)
             if added: self.in_car_counter += 1
+
     # executin multiple steps
     def simulate(self, time_of_sim, inflow):
         time_of_sim = time_of_sim * 60 # to seconds
@@ -117,21 +126,37 @@ class Scheduler:
             #update map
             self.step()
             
-            if(inflow and self.actual_time%(int(60/inflow)) == 0): self.add_cars()
+            if(inflow and self.actual_time%(int(60/inflow)) == 0): self.add_vehicles()
         return self.cars_passed, self.cumulative_results
         
     def get_cumulative_state(self):
         return self.cumulative_results
 
+    def get_random_vehicle(self, lane):
+        vehicle_type = np.random.choice([Car, AutonomousCar], 1, p=[1-self.propotion_of_autonomous,self.propotion_of_autonomous])
+        if vehicle_type == Car:
+            return Car(self.choose_speed()*1000/3600,
+                        lane=lane,
+                        number=self.in_car_counter,
+                        drivers_mood=random.gauss(self.average_drivers_mood, 0.05))
+        elif vehicle_type == AutonomousCar:
+            return AutonomousCar(self.choose_speed()*1000/3600,
+                                    lane=lane,
+                                    number=self.in_car_counter,
+                                    drivers_mood=0,
+                                    radius = 1000, 
+                                    delay = 0)
     def get_state(self):
         state = {}
         for lane in self.highway.lanes:
             state[lane.no] = { car.number:car.position for car in lane.cars }
         return state
+
     def safe_results_to_file(self, filename):
         out_file = open(f"{ filename }.json", "w") 
         json.dump(self.cumulative_results, out_file, indent = 6) 
         out_file.close() 
+
     def safe_to_file(self, filepath="scheduler.pkl"):
         with open(filepath, 'wb') as file:  # Overwrites any existing file.
             pickle.dump(self, file)
@@ -151,20 +176,25 @@ class Scheduler:
         self.cars_passed = 0
 
 # Debugging
-# inflow = 3 #cars per minute
-# sim_time = 120
-# scheduler = Scheduler(
-#     average_drivers_mood = 0.95, #likelihood of driver not accelerating
-#     num_of_lanes = 4, 
-#     highway_length = 10, 
-#     speed_limit = 60, #in km/h
-#     step_time = 1) # in sec
+inflow = 30 #cars per minute
+sim_time = 10
+scheduler = Scheduler(
+    average_drivers_mood = 0.95, #likelihood of driver not accelerating
+    num_of_lanes = 4, 
+    highway_length = 2, 
+    speed_limit = 60, #in km/h
+    step_time = 1,
+    propotion_of_autonomous = 1)
 
-# results,results_dict = scheduler.simulate(sim_time,inflow)
-# out_file = open("out.json", "w") 
-# json.dump(results_dict, out_file, indent = 6) 
-# out_file.close() 
-# print(f"Results:{results}/{(sim_time-1)*inflow}")
+results,results_dict = scheduler.simulate(sim_time,inflow)
+out_file = open("out.json", "w") 
+json.dump(results_dict, out_file, indent = 6) 
+out_file.close() 
+print(f"Results:{results}/{(sim_time-1)*inflow}")
+if(False):
+    for lane_ind,lane in enumerate(scheduler.highway.lanes):
+        for car_ind,car in enumerate(lane.cars):
+            print(type(car))
 
 
 # scheduler.highway.lanes[0].add_car(Car(60*1000/3600,scheduler.num_of_lanes,lane=0)) # 60km/h

@@ -36,10 +36,10 @@ scheduler = Scheduler(
 # ======================= More complicated ====================
 
 highway_length = 2
-num_of_lanes = 7
-average_drivers_mood = 0.85 #
+num_of_lanes = 3
+average_drivers_mood = 0.95 #
 sim_time = 4
-inflow = 15 #cars per minute
+inflow = 40 #cars per minute
 speed_limit = 90
 
 scheduler = Scheduler(
@@ -49,23 +49,28 @@ scheduler = Scheduler(
                         speed_limit = speed_limit, #in km/h
                         step_time = 1) # in sec
 
-results, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
-scheduler.safe_to_file("sim1.json")
+# Only normal cars
+results1, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
-
-scheduler.num_of_lanes = 3
-scheduler.average_drivers_mood = 0.97
+# Only outonomous cars
+scheduler.propotion_of_autonomous = 1
 scheduler.reset()
 results2, results_dict2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
-scheduler.safe_to_file("sim1.json")
+
+# 50/50
+scheduler.propotion_of_autonomous = 0.5
+scheduler.reset()
+results3, results_dict3 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
 createAnimation(
-    [results_dict1,results_dict2],
-    animation_speed = 10,
+    [results_dict1, results_dict2, results_dict3],
+    animation_speed = 100,
     reduce_data = 1,
     highway_length=highway_length,
-    num_of_lanes=[num_of_lanes,scheduler.num_of_lanes],
- #   export_gif_path = "../static/multiple.gif" #if not provided, animation will be shown in the form of plot
+    num_of_lanes=[num_of_lanes, num_of_lanes, num_of_lanes],
+    export_gif_path = "../static/autonomous.gif" #if not provided, animation will be shown in the form of plot
     )
 
-print(f"Results: {results}/{(sim_time)*inflow}")
+print(f"Results without autonomous: {results1}/{(sim_time)*inflow}")
+print(f"Results with only autonomous: {results2}/{(sim_time)*inflow}")
+print(f"Results with 50/50: {results3}/{(sim_time)*inflow}")

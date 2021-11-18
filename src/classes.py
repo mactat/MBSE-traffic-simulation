@@ -34,15 +34,17 @@ class Driver:
     #  * Brake - params:
     #  * Change lanes - params: [left,right]
     #  * Take an exit
+
     def random_mood(self):
         return random()
 
     def choose_action(self, car_env):
         self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, self.frontSpeed = car_env
 
-        # check if switching lane is possible
+        # Check if switching lane is possible
         switch_lane = self.switch_lanes(left_back, right_back, left_front, right_front)
-        #Variables for (de)acceleration
+
+        # Variables for (de)acceleration
         # *Delta v = Difference in speed of car infront and current car
         # * t = reaction time
         # * s0 = Desired minimum distance between cars
@@ -51,6 +53,7 @@ class Driver:
         # * ai = Max acceleration of car, taken from average acceleration in m/s^2 of cars
         # * b = Comfortable deaccleration of car, taken from google search
         # * v0 = desired speed of car, set as the speed limit
+
         deltav = self.current_speed - self.frontSpeed
         t = self.reaction_time
         s0 = 5
@@ -161,9 +164,30 @@ This will be implemented later as it is car with communication device.
 
 
 class AutonomousCar(Car):
-    def __init__(self, radius, delay):
+    def __init__(self, initial_speed, lane, drivers_mood=0.95, number=0, acc=0, breaking=0,radius = 1000, delay = 0):
+        super().__init__(initial_speed, lane, drivers_mood, number, acc, breaking)
         self.range = radius
         self.delay = delay
+
+    def refresh(self, time_elapsed, car_env, autonomous_env=None):
+        # chaange the way we define env
+        front, num_of_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed = car_env
+        car_env = front, num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed
+
+        action, params = self.driver.choose_action(car_env)  # should return VALID action and parameters
+        if action == 'accelerate':
+            self.current_speed = self.current_speed + params["value"]
+
+        if action == 'brake':
+            self.current_speed += params["value"]
+            if(self.current_speed  <= 0):
+                self.current_speed = 0
+
+        # Create behaviour based on selected actions
+        if action == 'change_lane':
+            self.switch_lane(params["direction"])
+
+        self.position = self.position + self.current_speed * time_elapsed
 
 
 '''
@@ -230,7 +254,7 @@ class Highway:
             frontSpeed = self.lanes[lane_ind].cars[car_ind + 1].current_speed
         else:
             front = float('inf')
-            frontSpeed = 0
+            frontSpeed = float('inf')
 
         my_position = self.lanes[lane_ind].cars[car_ind].position
 
@@ -268,5 +292,15 @@ class Highway:
         else:
             right_front = 0
             right_back = 0
-
         return front, self.no_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed
+
+    def get_autonomous_car_env(self, car_ind, lane_ind):
+        info_pack = [
+                    {"lane":vechicle.lane,
+                    "position":vechicle.position, 
+                    "speed":vechicle.current_speed} 
+                        for lane in self.lanes 
+                        for vechicle in lane.cars 
+                        if type(vechicle) == AutonomousCar]
+        return info_pack
+        
