@@ -129,9 +129,9 @@ class Scheduler:
         state ={"Lanes":{},"sim_state":{}}
         for lane in self.highway.lanes:
                state["Lanes"][lane.no] =      { "IDs":{vechile.number:{     
-                                                   "type":vechile.position,  # TODO: Fix when type is introduced 
+                                                   "type":type(vechile).__name__,  # TODO: Fix when type is introduced 
                                                    "position":vechile.position, 
-                                                   "speed":"speed",        # Include speed
+                                                   "speed":vechile.current_speed,  
                                                    "color":"color" }}  # TODO: Make color dependent on car type 
                                                    for vechile in lane.cars }
 
