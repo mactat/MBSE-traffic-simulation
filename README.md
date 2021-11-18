@@ -103,5 +103,33 @@ Results: 13/60
 
 ![testcase](/static/multiple.gif)
 
+**Simulation with autonomous cars**
+
+```
+Results without autonomous: 35/160
+Results with only autonomous: 140/160
+Results with 50/50: 74/160
+```
+
+![testcase](/static/autonomous.gif)
+
+```
+Animation time: 179.00/180.0s Real time: 2.98/3.00min
+Results without autonomous vehicles:
+Flow: 38/120 vehicles passed the highway.
+Average speed: 23.3/110 km/h.
+
+Results with only autonomous vehicles:
+Flow: 147/120 vehicles passed the highway.
+Average speed: 109.5/110 km/h.
+
+Results with 50/50 autonomous vehicles:
+Flow: 120/120 vehicles passed the highway.
+Average speed: 81.5/110 km/h.
+```
+
+![testcase](/static/autonomous2.gif)
+
+
 
 
