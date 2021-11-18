@@ -36,12 +36,42 @@ def dictToData(results):
     # results.keys represents point in time ex. secods of animations
     # sample is a dict which contains informations about state of the lanes
     # key is a lane number , value is a dict which contains cars in form car.num:car.position
+    x = []  
+    y = []
+    color = []
+    for sample in results["Time"].values():
+        print("sample")
+     #   print(sample)
+        print(sample["Lanes"])
+        temp_x=[]
+        temp_y = []
+        for lane in sample["Lanes"].values():
+            print("lane")
+            print(lane)
+            for vechile in lane.values():
+                print("vechile")
+                print(vechile.values())
+                for carattributes in  vechile.values():
+                    print("carattributes")
+                    print(carattributes)
+                    print(carattributes.values())
+                    y.append(carattributes["position"])
+        x.append(temp_x)
+        y.append(temp_y)
 
-    X =      [[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] for sample in results.values()]
-    Y =      [[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
-    colors = [[int(car_num) % 10 for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
+    exit()  
+          #  if(type(lane)):
+            #    print(vechile)
+        #[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] 
+ 
+    
+  #  X =      [[car_pos for lane_num,cars in sample["Lanes"].items() for car_pos in cars.values()] for sample in results.values()]
 
-    return X,Y,colors
+   # Y =      [[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
+    #colors = [[int(car_num) % 10 for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
+  #  print("X")
+   # print(X)
+   # return X,Y,colors
 
 def lower_samples(sample_list, multiple):
     return [sample for i, sample in enumerate(sample_list) if i%multiple == 0]
