@@ -15,7 +15,7 @@ scheduler = Scheduler(
                         speed_limit = speed_limit, #in km/h
                         step_time = 1) # in sec
 
-results, results_dict1 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
+results, results_dict1, speed = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
 # Exporting results
 scheduler.safe_results_to_file("sim1.json")
