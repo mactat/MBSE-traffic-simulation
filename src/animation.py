@@ -99,8 +99,9 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
             ax[j][0].axhline(-0.5, linestyle='-', color='white')
             ax[j][0].axhline(num_of_lanes[j] - 0.5, linestyle='-', color='white')
             ax[j][0].axes.get_yaxis().set_visible(False)
-            clearScreen()
-            print(f"Animation time: {i/animation_speed:.2f}/{frames/animation_speed}s Real time: {i*interval/1000*animation_speed*reduce_data/60:.2f}/{anim_time/60:.2f}min")
+            if(j % 100 == 0):
+                clearScreen()
+                print(f"Animation time: {i/animation_speed:.2f}/{frames/animation_speed}s Real time: {i*interval/1000*animation_speed*reduce_data/60:.2f}/{anim_time/60:.2f}min")
     ani = FuncAnimation(fig, animate, frames=frames, interval=interval, repeat=False)
     if not export_gif_path: plt.show()
     else:
