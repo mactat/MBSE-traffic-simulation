@@ -37,9 +37,16 @@ def dictToData(results):
     # sample is a dict which contains informations about state of the lanes
     # key is a lane number , value is a dict which contains cars in form car.num:car.position
 
+<<<<<<< HEAD
     X =      [[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] for sample in results.values()]
     Y =      [[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
     colors = [[int(car_num) % 10 for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
+=======
+    X=[[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] for sample in results.values()]
+    Y=[[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
+    colors = [[car_num for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
+    print("X=",results.values())
+>>>>>>> 433286ece040cd59df6a6b6ea304ccf9f153eeff
     return X,Y,colors
 
 def lower_samples(sample_list, multiple):

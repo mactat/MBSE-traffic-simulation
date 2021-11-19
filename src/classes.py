@@ -35,6 +35,7 @@ class Driver:
     def random_mood(self):
         return random()
 
+<<<<<<< HEAD
     def choose_action(self, car_env):
         self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, self.frontSpeed = car_env
 
@@ -60,6 +61,13 @@ class Driver:
         ai = 3.6
         b = 3.6
         v0 = self.speed_limit
+=======
+    def choose_action(self,car_env):
+        self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front, entry = car_env
+        #check if switching lane is possible
+        switch_lane = self.switch_lanes(left_back,right_back,left_front,right_front)
+        # If in entry lane switch
+>>>>>>> 433286ece040cd59df6a6b6ea304ccf9f153eeff
         if entry:
             if (left_back > self.speed_limit and left_front > 20):
                 action = "change_lane"
@@ -118,6 +126,15 @@ class Car:
         self.current_speed = initial_speed
         self.desired_speed = initial_speed
         self.breaking = breaking
+<<<<<<< HEAD
+=======
+    
+    # Has to be depended on driver's behaviour, dummy for now
+    def refresh(self,time_elapsed,car_env):
+        # chaange the way we define env
+        front, num_of_lanes, self.speed_limit,left_back,right_back,left_front,right_front, entry = car_env
+        car_env = front, num_of_lanes, self.current_speed, self.speed_limit, left_back,right_back,left_front,right_front, entry
+>>>>>>> 433286ece040cd59df6a6b6ea304ccf9f153eeff
 
     # Driver input for steering the car
     def driver_decide(self, time_elapsed, car_env):
@@ -218,6 +235,13 @@ class EntryLane(Lane):
         switch = switch
 
 
+# Entry ramp where switch is the distance it takes before the entry ramp end where cars can switch lane
+class EntryLane(Lane):
+    def __init__(self, no, length, switch):
+        super().__init__(no, length)
+        switch = switch
+
+
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):
         # In meters!
@@ -253,9 +277,14 @@ class Highway:
     '''
     def get_car_env(self, car_ind, lane_ind):
         # every change here require change in drivers class, to be able to handle new data
+<<<<<<< HEAD
         # front and front speed
         global frontSpeed
         if car_ind < len(self.lanes[lane_ind].cars) - 1:
+=======
+        # front
+        if car_ind < len(self.lanes[lane_ind].cars) - 1: 
+>>>>>>> 433286ece040cd59df6a6b6ea304ccf9f153eeff
             front = self.lanes[lane_ind].cars[car_ind + 1].position - self.lanes[lane_ind].cars[car_ind].position
             frontSpeed = self.lanes[lane_ind].cars[car_ind + 1].current_speed
         else:
@@ -298,6 +327,7 @@ class Highway:
         else:
             right_front = 0
             right_back = 0
+<<<<<<< HEAD
     # Fetching information from all autonomous cars
     def get_autonomous_car_env(self, car_ind, lane_ind):
         info_pack = [
@@ -312,3 +342,14 @@ class Highway:
 
 
         return front, self.no_lanes, self.speed_limit,left_back,right_back,left_front,right_front, frontSpeed, type(self.lanes[lane_ind]) is EntryLane
+=======
+
+
+
+        return front, self.no_lanes, self.speed_limit,left_back,right_back,left_front,right_front, type(self.lanes[lane_ind]) is EntryLane
+
+
+
+
+
+>>>>>>> 433286ece040cd59df6a6b6ea304ccf9f153eeff

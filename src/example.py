@@ -77,6 +77,7 @@ createAnimation(
     animation_speed = 1,
     reduce_data = 1,
     highway_length=highway_length,
+<<<<<<< HEAD
     num_of_lanes=[num_of_lanes, num_of_lanes, num_of_lanes],
     export_gif_path = "../static/autonomous2.gif" #if not provided, animation will be shown in the form of plot
     )
@@ -86,3 +87,8 @@ print(f"Results without autonomous vehicles:\nFlow: {results1}/{(sim_time)*inflo
 print(f"Results with only autonomous vehicles:\nFlow: {results2}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed2:.1f}/{speed_limit} km/h.\n")
 print(f"Results with 50/50 autonomous vehicles:\nFlow: {results3}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed3:.1f}/{speed_limit} km/h.\n")
 
+=======
+    num_of_lanes=[num_of_lanes]
+)
+"""
+print(f"Results: {results}/{(sim_time)*inflow}")
