@@ -26,5 +26,5 @@ steps:
   displayName: 'Try to save and load data'
 
 - script: |
-    cd ./tests && python3 ./test.sh
+    cd ./tests && ./test.sh
   displayName: 'Try to run test'
