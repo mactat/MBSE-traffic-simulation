@@ -105,6 +105,8 @@ Crutial for this class will be method refresh, which will update the position, s
 
 
 class Car:
+# TODO: Define Color of vechile dependent on car type. 
+
     def __init__(self, initial_speed, lane, drivers_mood=0.95, number=0, acc=0, breaking=0):
         self.driver = Driver(reaction_time=0, mood=drivers_mood)
         # In meters from the start of the highway

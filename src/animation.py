@@ -33,45 +33,27 @@ def clearScreen():
 
 def dictToData(results):
     
-    # results.keys represents point in time ex. secods of animations
-    # sample is a dict which contains informations about state of the lanes
-    # key is a lane number , value is a dict which contains cars in form car.num:car.position
-    x = []  
-    y = []
-    color = []
+    # Extraction of relevant data for animation. 
+    # X and Y position as well as car Color is extracted
+    X = []  
+    Y = []
+    colors = []
     for sample in results["Time"].values():
-        print("sample")
-     #   print(sample)
-        print(sample["Lanes"])
+        # init temps for each time cycle
         temp_x=[]
         temp_y = []
-        for lane in sample["Lanes"].values():
-            print("lane")
-            print(lane)
+        temp_color = []
+        for number,lane in sample["Lanes"].items() :
             for vechile in lane.values():
-                print("vechile")
-                print(vechile.values())
-                for carattributes in  vechile.values():
-                    print("carattributes")
-                    print(carattributes)
-                    print(carattributes.values())
-                    y.append(carattributes["position"])
-        x.append(temp_x)
-        y.append(temp_y)
-
-    exit()  
-          #  if(type(lane)):
-            #    print(vechile)
-        #[car_pos for lane_num,cars in sample.items() for car_pos in cars.values()] 
- 
-    
-  #  X =      [[car_pos for lane_num,cars in sample["Lanes"].items() for car_pos in cars.values()] for sample in results.values()]
-
-   # Y =      [[int(lane_num)   for lane_num,cars in sample.items() for single_val in cars] for sample in results.values()]
-    #colors = [[int(car_num) % 10 for lane_num,cars in sample.items() for car_num in cars.keys()] for sample in results.values()]
-  #  print("X")
-   # print(X)
-   # return X,Y,colors
+                for id,carattributes in  vechile.items():
+                    temp_y.append(number)
+                    temp_x.append(carattributes["position"])
+                    temp_color.append(id % 10 )  # TODO: Color should depend on car type and not ID. 
+                                                # should define color for Vechile in car class and not here!  
+        X.append(temp_x)
+        Y.append(temp_y)
+        colors.append(temp_color)
+    return X,Y,colors
 
 def lower_samples(sample_list, multiple):
     return [sample for i, sample in enumerate(sample_list) if i%multiple == 0]
