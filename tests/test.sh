@@ -5,7 +5,7 @@ for i in $(seq 1 $NUM_OF_FILES);
 do
     TEST_FAILED=false
     start=`date +%s.%N`
-    python3 ../src/headless.py < "input$i.txt" 2>/dev/null > "output$i.txt" || TEST_FAILED=true && FAILED=true
+    python3 ../src/headless.py < "input$i.txt" 2>/dev/null > "output$i.txt" || (TEST_FAILED=true && FAILED=true)
     end=`date +%s.%N`
     runtime=$( echo "$end - $start" | bc -l )
     if [ "$TEST_FAILED" = true ]
