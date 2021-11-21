@@ -37,7 +37,7 @@ class Driver:
         return random()
 
     def choose_action(self, car_env):
-        self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, self.frontSpeed = car_env
+        self.front, self.num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, self.frontSpeed, entry = car_env
 
         # Check if switching lane is possible
         switch_lane = self.switch_lanes(left_back, right_back, left_front, right_front)
@@ -61,8 +61,17 @@ class Driver:
         ai = 3.6
         b = 3.6
         v0 = self.speed_limit
-
-        if (self.current_speed * 1 > self.front):
+        if entry:
+            if (left_back > self.speed_limit and left_front > 20):
+                action = "change_lane"
+                params = {"direction": "left"}
+            else:
+                # to be changed to real formula
+                adjust = 0.1 * self.speed_limit / 3.6
+                if (self.current_speed + adjust) > self.speed_limit: adjust = self.speed_limit - self.current_speed
+                action = "accelerate"
+                params = {"value": adjust}
+        elif (self.current_speed * 1 > self.front):
             if switch_lane:
                 action = "change_lane"
                 params = { "direction": switch_lane }
@@ -116,8 +125,8 @@ class Car:
     # Driver input for steering the car
     def driver_decide(self, time_elapsed, car_env):
         # chaange the way we define env
-        front, num_of_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed = car_env
-        car_env = front, num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed
+        front, num_of_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed, entry = car_env
+        car_env = front, num_of_lanes, self.current_speed, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed, entry
 
         action, params = self.driver.choose_action(car_env)  # should return VALID action and parameters
         
@@ -170,7 +179,7 @@ class AutonomousCar(Car):
         "desired_speed": vehicle.desired_speed
     '''
     def take_action(self, time_elapsed, car_env, autonomous_env=None):
-        front, num_of_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed = car_env
+        front, num_of_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed, entry = car_env
         for vehicle in autonomous_env:
             if vehicle["lane"] == self.lane and vehicle["position"] - front == self.position:
                 self.current_speed = vehicle["desired_speed"]
@@ -204,6 +213,11 @@ class Lane:
         else:
             return False
 
+# Entry ramp where switch is the distance it takes before the entry ramp end where cars can switch lane
+class EntryLane(Lane):
+    def __init__(self, no, length, switch):
+        super().__init__(no, length)
+        switch = switch
 
 class Highway:
     def __init__(self, no_lanes, speed_limit, length):
@@ -212,6 +226,10 @@ class Highway:
         self.no_lanes = no_lanes
         self.lanes = [Lane(no=i, length=self.length) for i in range(no_lanes)]
         self.speed_limit = speed_limit
+
+    def add_entrylane(self, length, switch):
+        self.no_lanes += 1
+        self.lanes.append(EntryLane(self.no_lanes, length, switch))
 
     def render(self):
         for lane in self.lanes:
@@ -282,7 +300,7 @@ class Highway:
         else:
             right_front = 0
             right_back = 0
-        return front, self.no_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed
+        return front, self.no_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed, type(self.lanes[lane_ind]) is EntryLane
         
     # Fetching information from all autonomous cars
     def get_autonomous_car_env(self, car_ind, lane_ind):
