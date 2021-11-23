@@ -1,5 +1,6 @@
 from sim import *
 import matplotlib.pyplot as plt
+from pylab import text
 from matplotlib.animation import FuncAnimation
 from matplotlib.animation import PillowWriter
 import matplotlib
@@ -10,19 +11,19 @@ import random
 
 #style
 plt.rcParams.update({
-"lines.color": "white",
-"patch.edgecolor": "white",
-"text.color": "black",
-"axes.facecolor": "black",
-"axes.edgecolor": "lightgray",
-"axes.labelcolor": "white",
-"xtick.color": "black",
-"ytick.color": "white",
-"grid.color": "lightgray",
-"figure.facecolor": "white",
-"figure.edgecolor": "white",
-"savefig.facecolor": "white",
-"savefig.edgecolor": "black"})
+    "lines.color":       "white",
+    "patch.edgecolor":   "white",
+    "text.color":        "black",
+    "axes.facecolor":    "black",
+    "axes.edgecolor":    "lightgray",
+    "axes.labelcolor":   "white",
+    "xtick.color":       "black",
+    "ytick.color":       "white",
+    "grid.color":        "lightgray",
+    "figure.facecolor":  "white",
+    "figure.edgecolor":  "white",
+    "savefig.facecolor": "white",
+    "savefig.edgecolor": "black"})
 
 
 '''
@@ -78,14 +79,13 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
     flow_list = [lower_samples(flow,reduce_data) for flow in flow_list]
     speed_list = [lower_samples(speed,reduce_data) for speed in speed_list]
 
-
     data_q = len(X_list)
     fig, ax = plt.subplots(data_q + 2, squeeze=False)
     plt.xlabel("meters")
     #size_adj = num_of_lanes[0]/100
     #plt.subplots_adjust(bottom=(0.3-size_adj),top=(0.7+size_adj))
     plt.set_cmap('gist_rainbow')
-    fig.tight_layout()
+    fig.tight_layout(rect=[0, 0.03, 1, 0.95])
     cmap = matplotlib.cm.get_cmap('tab10')
     manager = plt.get_current_fig_manager()
     #manager.full_screen_toggle()
@@ -95,7 +95,18 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
     bar_color = [cmap(k) for k in range(data_q)]
     sim_names = list(reversed([f"sim{k+1}" for k in range(data_q)]))
 
+    
     def animate(i):
+        for txt in fig.texts: 
+            txt.set_visible(False)
+            del txt
+
+        fig.suptitle(f"Real time: {i/60:.1f}min",x=0.12,fontdict={'family':  'serif',
+                                                                        'color':  'darkred',
+                                                                        'weight': 'bold',
+                                                                        'size':   10,
+                                                                        'style': 'italic'
+                                                                        })
         ax[-2][0].clear()
         for j in range(data_q):
             x = X_list[j][i]
@@ -105,7 +116,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
             for k in range(num_of_lanes[j]-1): ax[j][0].axhline(0.5 + k, linestyle='--', color='white')
 
             for z in range(len(x)):
-                ax[j][0].scatter(x[z], y[z], marker="s",s=100/num_of_lanes[j],alpha=0.9,c=[cmap(c[z])])
+                ax[j][0].scatter(x[z], y[z], marker="s",s=50/num_of_lanes[j],alpha=0.9,c=[cmap(c[z])])
 
             ax[j][0].set_xlim([0,highway_length* 1000])
             ax[j][0].set_ylim([-1,num_of_lanes[j]])
@@ -119,12 +130,12 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
 
             # For linear plot
             ax[-2][0].plot(speed_list[j][:i],color=bar_color[-j-1],label=f"sim{j+1}")
-        ax[-2][0].set_title(f"Average speed (speed limit - {speed_list[0][0]/0.9} km/h)")
+        ax[-2][0].set_title(f"Average speed (speed limit - {(speed_list[0][0]/0.9):.1f} km/h)")
         ax[-2][0].set_facecolor("white")
         ax[-2][0].tick_params(axis='y', colors='black')
         ax[-2][0].set_xlabel("Time[s]")
         ax[-2][0].set_ylabel("Speed[km/h]")
-        ax[-2][0].legend(loc='upper right', facecolor="white",fontsize="small")
+        ax[-2][0].legend(loc='lower left', facecolor="white",fontsize="6")
 
         # For bar plot
         ax[-1][0].barh(bar_y, 
@@ -134,13 +145,12 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
         ax[-1][0].tick_params(axis='y', colors='black')
         ax[-1][0].set_yticklabels(["0"] + sim_names) # i have no clue why it is a case
         ax[-1][0].set_title(f"Vechicles passed the highway")
-
-
+    
     ani = FuncAnimation(fig, animate, frames=frames, interval=interval, repeat=False)
     if not export_gif_path: plt.show()
     else:
         writergif = PillowWriter(fps=20) 
-        ani.save(export_gif_path, writer=writergif)
+        ani.save(export_gif_path, writer=writergif,dpi=200)
     return
 
 
