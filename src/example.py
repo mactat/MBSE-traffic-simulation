@@ -6,10 +6,10 @@ This example shows how to run the simulation along with animation
 '''
 
 
-highway_length = 1
-num_of_lanes = 3
-average_drivers_mood = 0.88
-sim_time = 15
+highway_length = 5
+num_of_lanes = 4
+average_drivers_mood = 0.90
+sim_time = 5
 inflow = 60 #cars per minute
 speed_limit = 110
 
@@ -30,7 +30,7 @@ scheduler.reset()
 results2, results_dict2, average_speed2 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
 # 50/50
-scheduler.propotion_of_autonomous = 0.5
+scheduler.propotion_of_autonomous = 0.6
 scheduler.reset()
 results3, results_dict3, average_speed3 = scheduler.simulate(time_of_sim = sim_time, inflow = inflow)
 
@@ -40,7 +40,7 @@ createAnimation(
     reduce_data = 1,
     highway_length=highway_length,
     num_of_lanes=[num_of_lanes, num_of_lanes, num_of_lanes],
-    export_gif_path = "../static/autonomous4.gif" #if not provided, animation will be shown in the form of plot
+    export_gif_path = "../static/autonomous6.gif" #if not provided, animation will be shown in the form of plot
     )
 
 print(f"Results without autonomous vehicles:\nFlow: {results1}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed1:.1f}/{speed_limit} km/h.\n")
