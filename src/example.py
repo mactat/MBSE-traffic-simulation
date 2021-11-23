@@ -8,8 +8,8 @@ This example shows how to run the simulation along with animation
 
 highway_length = 5
 num_of_lanes = 4
-average_drivers_mood = 0.90
-sim_time = 5
+average_drivers_mood = 0.85
+sim_time = 10
 inflow = 60 #cars per minute
 speed_limit = 110
 
@@ -40,9 +40,9 @@ createAnimation(
     reduce_data = 1,
     highway_length=highway_length,
     num_of_lanes=[num_of_lanes, num_of_lanes, num_of_lanes],
-    export_gif_path = "../static/autonomous6.gif" #if not provided, animation will be shown in the form of plot
+    export_gif_path = "../static/autonomous8.gif" #if not provided, animation will be shown in the form of plot
     )
 
 print(f"Results without autonomous vehicles:\nFlow: {results1}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed1:.1f}/{speed_limit} km/h.\n")
 print(f"Results with only autonomous vehicles:\nFlow: {results2}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed2:.1f}/{speed_limit} km/h.\n")
-print(f"Results with 50/50 autonomous vehicles:\nFlow: {results3}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed3:.1f}/{speed_limit} km/h.\n")
+print(f"Results with 60/40 autonomous vehicles:\nFlow: {results3}/{(sim_time)*inflow} vehicles passed the highway.\nAverage speed: {average_speed3:.1f}/{speed_limit} km/h.\n")

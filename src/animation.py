@@ -97,7 +97,10 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
 
     
     def animate(i):
-        for txt in fig.texts: txt.set_visible(False)
+        for txt in fig.texts: 
+            txt.set_visible(False)
+            del txt
+
         fig.suptitle(f"Real time: {i/60:.1f}min",x=0.12,fontdict={'family':  'serif',
                                                                         'color':  'darkred',
                                                                         'weight': 'bold',
@@ -113,7 +116,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
             for k in range(num_of_lanes[j]-1): ax[j][0].axhline(0.5 + k, linestyle='--', color='white')
 
             for z in range(len(x)):
-                ax[j][0].scatter(x[z], y[z], marker="s",s=100/num_of_lanes[j],alpha=0.9,c=[cmap(c[z])])
+                ax[j][0].scatter(x[z], y[z], marker="s",s=50/num_of_lanes[j],alpha=0.9,c=[cmap(c[z])])
 
             ax[j][0].set_xlim([0,highway_length* 1000])
             ax[j][0].set_ylim([-1,num_of_lanes[j]])
@@ -146,8 +149,8 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
     ani = FuncAnimation(fig, animate, frames=frames, interval=interval, repeat=False)
     if not export_gif_path: plt.show()
     else:
-        writergif = PillowWriter(fps=15) 
-        ani.save(export_gif_path, writer=writergif,dpi=600)
+        writergif = PillowWriter(fps=20) 
+        ani.save(export_gif_path, writer=writergif,dpi=200)
     return
 
 
