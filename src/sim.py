@@ -24,7 +24,7 @@ class Scheduler:
         self.in_car_counter = 0
         self.cars_passed = 0
         self.samples = 0
-        self.average_speed = 0
+        self.average_speed = 0.9*self.speed_limit
 
     def update_average_speed(self,speed):
         self.samples += 1
@@ -126,7 +126,8 @@ class Scheduler:
                                                     for vechile in lane.cars}  # TODO: Make color dependent on car type 
                                                    }
 
-        state["sim_state"] = {"cars_passed":self.cars_passed}
+        state["sim_state"] = {"cars_passed": self.cars_passed,
+                                "average_speed": self.average_speed}
 
         return state
 
@@ -153,5 +154,5 @@ class Scheduler:
         self.cumulative_results = {"Time":{}}
         self.actual_time = 0
         self.cars_passed = 0
-        self.average_speed = 0
+        self.average_speed = 0.9*self.speed_limit
         self.samples = 0

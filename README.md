@@ -132,5 +132,10 @@ Average speed: 81.5/110 km/h.
 ![testcase](/static/autonomous2.gif)
 
 
+**Simulation with autonomous cars and plots**
+
+![testcase](/static/autonomous_with_plots.gif)
+
+
 
 
