@@ -46,13 +46,12 @@ def dictToData(results):
         temp_x=[]
         temp_y = []
         temp_color = []
-        for number,lane in sample["Lanes"].items() :
+        for number,lane in sample["Lanes"].items():
             for vechile in lane.values():
                 for id,carattributes in  vechile.items():
                     temp_y.append(number)
                     temp_x.append(carattributes["position"])
-                    temp_color.append(id % 10 )  # TODO: Color should depend on car type and not ID. 
-                                                # should define color for Vechile in car class and not here!  
+                    temp_color.append(carattributes["color"])  
         X.append(temp_x)
         Y.append(temp_y)
         colors.append(temp_color)

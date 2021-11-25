@@ -111,6 +111,7 @@ class Car:
         self.number = number
         # For now we are asuuming that cars are just a point, has to be changed later
         self.size = 0
+        self.color = 8 # Yellow
 
         # Setter would be better
         self.lane = lane
@@ -166,10 +167,11 @@ For now it is only checking if the car in front is autonomous and it is synchron
 this car.
 '''
 class AutonomousCar(Car):
-    def __init__(self, initial_speed, lane, drivers_mood=0.95, number=0, acc=0, breaking=0,radius = 1000, delay = 0):
+    def __init__(self, initial_speed, lane, drivers_mood=0, number=0, acc=0, breaking=0,radius = 1000, delay = 0):
         super().__init__(initial_speed, lane, drivers_mood, number, acc, breaking)
         self.range = radius
         self.delay = delay
+        self.color = 2 # Green
     
     '''
         Getting also information about all autonomous vechicles in form of dict:
@@ -189,6 +191,15 @@ class AutonomousCar(Car):
         self.lane = self.desired_lane
         self.position = self.position + self.current_speed * time_elapsed
 
+
+'''
+Truck class that extends Car.
+Truck itself do not make any decision, it has to ask the driver. (Similar to Car class)
+'''
+class Truck(Car):
+    def __init__(self, initial_speed, lane, drivers_mood=0.95, number=0, acc=0, breaking=0):
+        super().__init__(initial_speed, lane, drivers_mood, number, acc, breaking)
+        self.color = 3 # Red 
 
 '''
 Lane is an element of the highway. 
