@@ -64,7 +64,7 @@ def lower_samples(sample_list, multiple):
     return [sample for i, sample in enumerate(sample_list) if i%multiple == 0]
 
 
-def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_lanes=2,reduce_data=10,export_gif_path=None):
+def createAnimation(results_list,animation_speed = 10, highway_length=1,num_of_lanes=2,reduce_data=1,export_gif_path=None,names=None):
     # Data extraction
     all_results = [dictToData(results) for results in results_list]
     X_list =      [resultls[0] for resultls in all_results]
@@ -81,6 +81,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
 
     anim_time = len(X_list[0])
     data_q = len(X_list)
+    if not names: names = [f"sim{j+1}" for j in range(data_q)]
 
     fig, ax = plt.subplots(data_q + 2, squeeze=False)
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
@@ -98,7 +99,9 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
     ax[-2][0].set_facecolor("white")
     ax[-2][0].tick_params(axis='y', colors='black')
     ax[-2][0].set_xlabel("Time[s]")
+    ax[-2][0].xaxis.label.set_color('black')
     ax[-2][0].set_ylabel("Speed[km/h]")
+    ax[-2][0].yaxis.label.set_color('black')
 
     # bar plot
     ax[-1][0].set_facecolor("white")
@@ -113,7 +116,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
         for k in range(num_of_lanes[j]-1): ax[j][0].axhline(0.5 + k, linestyle='--', color='white')
         ax[j][0].set_xlim([0,highway_length* 1000])
         ax[j][0].set_ylim([-1,num_of_lanes[j]])
-        ax[j][0].set_title(f"sim{j+1}")
+        ax[j][0].set_title(names[j])
         ax[j][0].axhline(-0.5, linestyle='-', color='white')
         ax[j][0].axhline(num_of_lanes[j] - 0.5, linestyle='-', color='white')
         ax[j][0].axes.get_yaxis().set_visible(False)
@@ -135,7 +138,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
             
             # For linear plot
             ax[-2][0].plot(speed_list[j][:i],color=bar_color[-j-1],label=f"sim{j+1}")
-        ax[-2][0].set_title(f"Average speed (speed limit - {(speed_list[0][0]/0.9):.1f} km/h)")
+        ax[-2][0].set_title(f"Average speed (speed limit - {int(speed_list[0][0]/0.9)} km/h)")
         ax[-2][0].legend(loc='lower left', facecolor="white",fontsize="5")
 
         # For bar plot
@@ -149,8 +152,8 @@ def createAnimation(results_list,animation_speed = 10, highway_length=10,num_of_
 
     if not export_gif_path: plt.show()
     else:
-        writergif = PillowWriter(fps=20) 
-        ani.save(export_gif_path, writer=writergif, dpi=200)
+        writergif = PillowWriter(fps=15) 
+        ani.save(export_gif_path, writer=writergif, dpi=150)
         print(f"File:{export_gif_path} saved.")
     return
 
