@@ -167,7 +167,7 @@ For now it is only checking if the car in front is autonomous and it is synchron
 this car.
 '''
 class AutonomousCar(Car):
-    def __init__(self, initial_speed, lane, drivers_mood=0, number=0, acc=0, breaking=0,radius = 1000, delay = 0):
+    def __init__(self, initial_speed, lane, drivers_mood=0.95, number=0, acc=0, breaking=0,radius = 1000, delay = 0):
         super().__init__(initial_speed, lane, drivers_mood, number, acc, breaking)
         self.range = radius
         self.delay = delay
