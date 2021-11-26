@@ -102,7 +102,6 @@ This class represents the car. Car itself do not make any decision, it has to as
 Crutial for this class will be method refresh, which will update the position, speed etc.
 '''
 class Car:
-# TODO: Define Color of vechile dependent on car type. 
 
     def __init__(self, initial_speed, lane, drivers_mood=0.95, number=0, acc=0, breaking=0):
         self.driver = Driver(reaction_time=0, mood=drivers_mood)
@@ -237,6 +236,7 @@ class Highway:
         self.no_lanes = no_lanes
         self.lanes = [Lane(no=i, length=self.length) for i in range(no_lanes)]
         self.speed_limit = speed_limit
+        self.speed_limit_truck = self.speed_limit-(self.speed_limit*0.2)
 
     def add_entrylane(self, length, switch):
         self.no_lanes += 1
@@ -263,7 +263,7 @@ class Highway:
      * is it raining - later
      * speed limit - later
     '''
-    def get_car_env(self, car_ind, lane_ind):
+    def get_car_env(self, car_ind, lane_ind, car_type=None):
         # every change here require change in drivers class, to be able to handle new data
 
         # front and front speed
@@ -311,7 +311,12 @@ class Highway:
         else:
             right_front = 0
             right_back = 0
-        return front, self.no_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed, type(self.lanes[lane_ind]) is EntryLane
+        # for trucks speed limit is 80% than for cars
+        # Thus, speed_limit_truck is returned.  
+        if car_type == Truck: 
+            return front, self.no_lanes, self.speed_limit_truck, left_back, right_back, left_front, right_front, frontSpeed, type(self.lanes[lane_ind]) is EntryLane
+        
+        return front, self.no_lanes, self.speed_limit, left_back, right_back, left_front, right_front, frontSpeed, type(self.lanes[lane_ind]) is EntryLane           
         
     # Fetching information from all autonomous cars
     def get_autonomous_car_env(self, car_ind, lane_ind):

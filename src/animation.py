@@ -48,7 +48,7 @@ def dictToData(results):
         temp_color = []
         for number,lane in sample["Lanes"].items():
             for vechile in lane.values():
-                for id,carattributes in  vechile.items():
+                for _,carattributes in  vechile.items():
                     temp_y.append(number)
                     temp_x.append(carattributes["position"])
                     temp_color.append(cmap(carattributes["color"]))  

@@ -40,7 +40,7 @@ class Scheduler:
         for lane_ind,lane in enumerate(self.highway.lanes):
             for car_ind,car in enumerate(lane.cars):
                 # Gateher info about car env
-                car_env = self.highway.get_car_env(car_ind, lane_ind)
+                car_env = self.highway.get_car_env(car_ind, lane_ind, type(car))
                 self.update_average_speed(car.current_speed)
                 # Make changes in car, as speed, changing lane, etc based on env
                 car.driver_decide(self.step_time,car_env)
@@ -53,7 +53,7 @@ class Scheduler:
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
 
                 # Make changes in car, as speed, changing lane, etc based on env
-                if type(car) == (Car or Truck):
+                if type(car) == Car or type(car) == Truck:
                     car.take_action(self.step_time)
                 elif type(car) == AutonomousCar:
                     autonomous_car_env = self.highway.get_autonomous_car_env(car_ind, lane_ind)
