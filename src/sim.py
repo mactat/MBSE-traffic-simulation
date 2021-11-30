@@ -106,7 +106,7 @@ class Scheduler:
         return self.cumulative_results
 
     def get_random_vehicle(self, lane):
-        vehicle_type = np.random.choice([Car,AutonomousCar, Truck], 1, p=[1-(self.propotion_of_trucks + self.propotion_of_autonomous),self.propotion_of_trucks,self.propotion_of_autonomous])
+        vehicle_type = np.random.choice([Car,AutonomousCar, Truck], 1, p=[1-(self.propotion_of_trucks + self.propotion_of_autonomous),self.propotion_of_autonomous,self.propotion_of_trucks])
         if vehicle_type == Car:
             return Car(self.choose_speed(),
                         lane = lane,
