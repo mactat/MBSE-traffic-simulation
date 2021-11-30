@@ -12,7 +12,7 @@ def run_x_simulations(param, variable):
     num_of_lanes = 4
     highway_length = 10
     speed_limit = 110
-    number_of_runs = 1
+    number_of_runs = 20
 
     # Determine which parameter is in variable
     if param == "inflow": inflow = variable[1]
@@ -64,7 +64,7 @@ inflow_range = np.arange(10, 70, 10)
 test1_input = itertools.product(autonomous_range, inflow_range)
 test1_results = pool.map(inflow_test, test1_input)
 
-print("Printing test1 results")
+print("Printing test 1 results")
 with open('test1.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(test1_results)
@@ -76,6 +76,7 @@ lane_range = np.arange(1, 10, 1)
 test2_input = itertools.product(autonomous_range, lane_range)
 test2_results = pool.map(lane_test, test2_input)
 
+print("Printing test 2 results")
 with open('test2.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(test2_results)
@@ -88,16 +89,18 @@ speed_range = np.arange(50, 140, 10)
 test3_input = itertools.product(autonomous_range, speed_range)
 test3_results = pool.map(speed_test, test3_input)
 
+print("Printing test 3 results")
 with open('test3.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(test3_results)
 
 
 #test 4:
-print("Running test4: variable propotion_of_autonomous")
+print("Running test 4: variable propotion_of_autonomous")
 test4_input = itertools.product(autonomous_range, [0])
 test4_results = pool.map(general_test, test4_input)
 
+print("Printing test 4 results")
 with open('test4.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(test4_results)
