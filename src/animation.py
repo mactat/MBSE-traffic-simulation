@@ -106,7 +106,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=1,num_of_l
     # bar plot
     ax[-1][0].set_facecolor("white")
     ax[-1][0].tick_params(axis='y', colors='black')
-    #ax[-1][0].set_yticklabels(sim_names) # i have no clue why it is a case
+    ax[-1][0].set_yticklabels(sim_names) # i have no clue why it is a case
     ax[-1][0].set_title(f"Vechicles passed the highway")
     font = {'family':  'serif', 'color':  'darkred', 'weight': 'bold','size': 10, 'style': 'italic'}
 
