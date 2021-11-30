@@ -93,14 +93,3 @@ print("Printing test 3 results")
 with open('test3.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(test3_results)
-
-
-#test 4:
-print("Running test 4: variable propotion_of_autonomous")
-test4_input = itertools.product(autonomous_range, [0])
-test4_results = pool.map(general_test, test4_input)
-
-print("Printing test 4 results")
-with open('test4.csv', 'w', encoding='UTF8', newline='') as f:
-    writer = csv.writer(f)
-    writer.writerows(test4_results)
