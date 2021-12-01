@@ -11,12 +11,13 @@ It takes all parameters of the simulation and produces output.
 It will be able to perform whole simulation or go step by step by simulation.
 '''
 class Scheduler:
-    def __init__(self,num_of_lanes, highway_length, speed_limit,step_time, average_drivers_mood, propotion_of_autonomous=0) -> None:
+    def __init__(self,num_of_lanes, highway_length, speed_limit,step_time, average_drivers_mood, propotion_of_autonomous=0, propotion_of_trucks=0) -> None:
         self.num_of_lanes = num_of_lanes
         self.length = highway_length * 1000 # from km to m
         self.speed_limit = speed_limit*1000/3600
         self.average_drivers_mood = average_drivers_mood
         self.propotion_of_autonomous = propotion_of_autonomous
+        self.propotion_of_trucks = propotion_of_trucks
         self.step_time = step_time # in seconds
         self.highway = Highway(speed_limit = self.speed_limit, no_lanes = self.num_of_lanes, length = self.length)
         self.cumulative_results = {"Time":{}}
@@ -39,7 +40,7 @@ class Scheduler:
         for lane_ind,lane in enumerate(self.highway.lanes):
             for car_ind,car in enumerate(lane.cars):
                 # Gateher info about car env
-                car_env = self.highway.get_car_env(car_ind, lane_ind)
+                car_env = self.highway.get_car_env(car_ind, lane_ind, type(car))
                 self.update_average_speed(car.current_speed)
                 # Make changes in car, as speed, changing lane, etc based on env
                 car.driver_decide(self.step_time,car_env)
@@ -52,7 +53,7 @@ class Scheduler:
                 car_env = self.highway.get_car_env(car_ind, lane_ind)
 
                 # Make changes in car, as speed, changing lane, etc based on env
-                if type(car) == Car:
+                if type(car) == Car or type(car) == Truck:
                     car.take_action(self.step_time)
                 elif type(car) == AutonomousCar:
                     autonomous_car_env = self.highway.get_autonomous_car_env(car_ind, lane_ind)
@@ -75,8 +76,11 @@ class Scheduler:
 
 
     # Chossing random speed from gausian distribution
-    def choose_speed(self):    
-        speed = random.gauss(0.9 * self.speed_limit, 0.1*self.speed_limit) 
+    def choose_speed(self,truck=False):    
+        if truck:
+            speed = random.gauss(0.7 * self.speed_limit, 0.1*self.speed_limit) 
+        else:
+            speed = random.gauss(0.9 * self.speed_limit, 0.1*self.speed_limit) 
         if speed > self.speed_limit: speed = self.speed_limit
         return speed
 
@@ -102,7 +106,7 @@ class Scheduler:
         return self.cumulative_results
 
     def get_random_vehicle(self, lane):
-        vehicle_type = np.random.choice([Car, AutonomousCar], 1, p=[1-self.propotion_of_autonomous,self.propotion_of_autonomous])
+        vehicle_type = np.random.choice([Car,AutonomousCar, Truck], 1, p=[1-(self.propotion_of_trucks + self.propotion_of_autonomous),self.propotion_of_autonomous,self.propotion_of_trucks])
         if vehicle_type == Car:
             return Car(self.choose_speed(),
                         lane = lane,
@@ -115,6 +119,12 @@ class Scheduler:
                                     drivers_mood = 0,
                                     radius = 1000, 
                                     delay = 0)
+        elif vehicle_type == Truck:
+            return Truck(self.choose_speed(True),
+                                    lane = lane,
+                                    number = self.in_car_counter,
+                                    drivers_mood = 0.2, # Not sure? 
+                                    )
     def get_state(self):
         state ={"Lanes":{},"sim_state":{}}
         for lane in self.highway.lanes:
@@ -122,7 +132,7 @@ class Scheduler:
                                                    "type":type(vechile).__name__,  # TODO: Fix when type is introduced 
                                                    "position":vechile.position, 
                                                    "speed":vechile.current_speed,  
-                                                   "color":"color" }
+                                                   "color":vechile.color }
                                                     for vechile in lane.cars}  # TODO: Make color dependent on car type 
                                                    }
 
