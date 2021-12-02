@@ -92,7 +92,6 @@ def createAnimation(results_list,animation_speed = 10, highway_length=1,num_of_l
 
     bar_y =     [k+1 for k in range(data_q)]
     bar_color = [cmap(k) for k in range(data_q)]
-    sim_names = list(reversed([f"sim{k+1}" for k in range(data_q)]))
 
     # init params
     # Speed plot
@@ -106,7 +105,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=1,num_of_l
     # bar plot
     ax[-1][0].set_facecolor("white")
     ax[-1][0].tick_params(axis='y', colors='black')
-    ax[-1][0].set_yticklabels(["0"] + sim_names) # i have no clue why it is a case
+    ax[-1][0].axes.get_yaxis().set_visible(False)
     ax[-1][0].set_title(f"Vechicles passed the highway")
     font = {'family':  'serif', 'color':  'darkred', 'weight': 'bold','size': 10, 'style': 'italic'}
 
@@ -144,7 +143,7 @@ def createAnimation(results_list,animation_speed = 10, highway_length=1,num_of_l
         # For bar plot
         ax[-1][0].barh(bar_y, [flow[i] for flow in reversed(flow_list)], color=bar_color)
                     # Print status
-        if(i % 10 == 0):
+        if(i % 50 == 0):
             clearScreen()
             print(f"Animation time: {i/animation_speed:.2f}/{frames/animation_speed}s Real time: {i*interval/1000*animation_speed*reduce_data/60:.2f}/{anim_time/60:.2f}min")
     
