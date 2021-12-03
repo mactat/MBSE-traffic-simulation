@@ -3,19 +3,19 @@ from matplotlib import cm
 import numpy as np
 import seaborn as sns
 
-sim_results = np.genfromtxt('test4.csv', delimiter=',').T
+sim_results = np.genfromtxt('test3.csv', delimiter=',').T
 
-features = ['Propotion of Autonomous cars [%]', 'Propotion of trucks [%]', 'Flow', 'Average Speed [km/h]']
-ranges = [np.arange(0,1.1,0.1),np.arange(0,1.1,0.1)]
+features = ['Propotion of Autonomous cars [%]', 'Speed Limit [km/h]', 'Flow', 'Average Speed [km/h]']
+ranges = [np.arange(0,101,10),np.arange(50,131,10)]
 style = "plot3d" # heatmap, plot3d
 
-x, y, z, avg_speed = sim_results[0], sim_results[1], sim_results[2], sim_results[3]
+x, y, z, avg_speed = sim_results[0]*100, sim_results[1], sim_results[2], sim_results[3]
 if style == "plot3d":
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     ax.set_xlabel(features[0])
     ax.set_ylabel(features[1])
     ax.set_zlabel(features[2])
-    surf = ax.plot_trisurf(x, y, avg_speed, cmap=cm.coolwarm, linewidth=0, antialiased=True)
+    surf = ax.plot_trisurf(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=True)
     fig.colorbar(surf, shrink=0.5, aspect=5)
 
 if style == "heatmap":
