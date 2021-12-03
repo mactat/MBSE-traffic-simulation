@@ -13,11 +13,13 @@ def run_x_simulations(param, variable):
     highway_length = 10
     speed_limit = 110
     number_of_runs = 20
+    propotion_of_trucks=0.0
 
     # Determine which parameter is in variable
     if param == "inflow": inflow = variable[1]
     elif param == "num_of_lanes": num_of_lanes = variable[1]
     elif param == "speed_limit": speed_limit = variable[1]
+    elif param == "trucks": propotion_of_trucks = variable[1]
 
     scheduler = Scheduler(
         num_of_lanes = num_of_lanes,
@@ -25,7 +27,8 @@ def run_x_simulations(param, variable):
         speed_limit = speed_limit, #in km/h
         step_time = 1,
         average_drivers_mood = average_drivers_mood, #likelihood of driver not accelerating
-        propotion_of_autonomous = variable[0])
+        propotion_of_autonomous = variable[0],
+        propotion_of_trucks = propotion_of_trucks)
 
     results = 0.0
     average_speed = 0.0
@@ -47,18 +50,18 @@ def lane_test(a):
     return run_x_simulations("num_of_lanes", a)
 def speed_test(a):
     return run_x_simulations("speed_limit", a)
-def general_test(a):
-    return run_x_simulations("", a)
+def truck_test(a):
+    return run_x_simulations("trucks", a)
 
 
 
 
 
 pool = Pool()
+autonomous_range = np.arange(0.0, 1.1, 0.1)
 
 #test 1: varying inflow
 print("Running test 1: variable propotion_of_autonomous and inflow")
-autonomous_range = np.arange(0.0, 1.1, 0.1)
 inflow_range = np.arange(10, 70, 10)
 
 test1_input = itertools.product(autonomous_range, inflow_range)
@@ -93,3 +96,16 @@ print("Printing test 3 results")
 with open('test3.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(test3_results)
+
+#test 4: varying propotion_of_trucks
+print("Running test 4: variable propotion_of_autonomous and propotion_of_trucks")
+truck_range = np.arange(0.0, 1.1, 0.1)
+
+test4_input = itertools.product(autonomous_range, truck_range)
+test4_input = filter(lambda x: (x[0] + x[1]) <= 1, test4_input)
+test4_results = pool.map(truck_test, test4_input)
+
+print("Printing test 4 results")
+with open('test4.csv', 'w', encoding='UTF8', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerows(test4_results)

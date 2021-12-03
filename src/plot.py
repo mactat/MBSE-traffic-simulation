@@ -3,11 +3,11 @@ from matplotlib import cm
 import numpy as np
 import seaborn as sns
 
-sim_results = np.genfromtxt('test3.csv', delimiter=',').T
+sim_results = np.genfromtxt('test4.csv', delimiter=',').T
 
-features = ['Propotion of Autonomous cars [%]', 'Speed Limit [km/h]', 'Flow', 'Average Speed [km/h]']
-ranges = [np.arange(0,110,10),np.arange(50,131,10)]
-style = "heatmap" # heatmap, plot3d
+features = ['Propotion of Autonomous cars [%]', 'Propotion of trucks [%]', 'Flow', 'Average Speed [km/h]']
+ranges = [np.arange(0,1.1,0.1),np.arange(0,1.1,0.1)]
+style = "plot3d" # heatmap, plot3d
 
 x, y, z, avg_speed = sim_results[0], sim_results[1], sim_results[2], sim_results[3]
 if style == "plot3d":
