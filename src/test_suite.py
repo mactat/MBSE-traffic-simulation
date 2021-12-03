@@ -11,7 +11,8 @@ def test(params, features):
         highway_length =          params['Highway length [km]'],
         speed_limit =             params['Speed limit [km/h]'],
         step_time =               1,
-        propotion_of_autonomous = params['Propotion of Autonomous cars [%]']/100)
+        propotion_of_autonomous = params['Propotion of Autonomous cars [%]']/100,
+        propotion_of_trucks = params['Propotion of Trucks [%]']/100)
 
     params['Flow'], _, params['Average speed [km/h]'] = scheduler.simulate(params['Simulation time [s]'],params['Inflow [vehicle/minute]'])
     return [params[single_feature] for single_feature in features]
@@ -24,6 +25,7 @@ params_dict={
     'Highway length [km]':              4,
     'Speed limit [km/h]':               110,
     'Propotion of Autonomous cars [%]': 0,
+    'Propotion of Trucks [%]':          0,
     'Flow':                             0, #result
     'Average speed [km/h]':             0  #result
 }
@@ -32,8 +34,8 @@ sim_results = []
 
 # ====================== params =================
 
-features = ['Propotion of Autonomous cars [%]', 'Inflow [vehicle/minute]', 'Flow']
-ranges = [np.arange(0,100,5),np.arange(5,50,5)]
+features = ['Propotion of Autonomous cars [%]', 'Propotion of Trucks [%]', 'Flow']
+ranges = [np.arange(0,50,10),np.arange(0,50,10)]
 style = "plot3d" # heatmap, plot3d
 
 # ===============================================
