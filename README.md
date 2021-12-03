@@ -93,11 +93,12 @@ createAnimation(
 ```
 **Note: All parameters provided to animation are arrays, so it is possible to visualize multiple simulation in one animation.**
 ## Results
-As a results simulator is evaluating number of cars which were able to pass the highway:
+As a results the simulator is evaluating number of cars which were able to pass the highway (flow) and the average speed of the cars compared to the speed limit:
 
 ```
 Animation time: 23.90/24.0s Real time: 3.98/4.00min
-Results: 13/60
+Flow: 13/60
+Average speed: 32.3/110 km/h.
 ```
 
 ## Functions of the simulator
