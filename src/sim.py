@@ -123,7 +123,7 @@ class Scheduler:
             return Truck(self.choose_speed(True),
                                     lane = lane,
                                     number = self.in_car_counter,
-                                    drivers_mood = 0.2, # Not sure? 
+                                    drivers_mood = 0.9 
                                     )
     def get_state(self):
         state ={"Lanes":{},"sim_state":{}}
