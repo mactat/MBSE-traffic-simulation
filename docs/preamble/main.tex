@@ -1,0 +1,66 @@
+\documentclass[sigconf]{acmart}
+\settopmatter{printacmref=false} % Removes citation information below abstract
+\renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
+\pagestyle{plain} % removes running headers
+
+\usepackage{listings}
+\usepackage{booktabs} % For formal tables
+\usepackage{multirow}
+\usepackage{adjustbox}
+%\usepackage[table,xcdraw]{xcolor}
+\begin{document}
+\begin{titlepage}
+    \input{sections/Contribution}
+\end{titlepage}
+
+\title{Preventing Phantom Traffic with V2V Communication and Autonomous Driving}
+\subtitle{02223 MBSE final project}
+
+
+\author{Mohammad Nabil Ahmad}
+\affiliation{%
+}
+\email{s184355@student.dtu.dk}
+\author{Frederik Schibelfeldt}
+\affiliation{%
+}
+\email{s184477@student.dtu.dk}
+\author{Abdirisaq Farah}
+\affiliation{%
+}
+\email{s163157@student.dtu.dk}
+
+\author{Maciej Tatarski}
+\affiliation{%
+}
+\email{s202609@student.dtu.dk}
+\author{Alexander Welsch Carlsen}
+\affiliation{%
+}
+\email{s200463@student.dtu.dk}
+\author{Alberto Raheli}
+\affiliation{%
+}
+\email{s211012@student.dtu.dk}
+\input{sections/00-abstract}
+\maketitle
+
+% \renewcommand{\shortauthors}{DTU}
+% \acmConference[MBSE]{MBSE}{December 2021}{Copenhagen, DK}
+
+% Insert sections here
+\input{sections/01-introduction}
+\input{sections/02-problem}
+\input{sections/03-methodology}
+\input{sections/04-implementation}
+\input{sections/05-experiments}
+\input{sections/06-discussion}
+\input{sections/07-conclusion}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{bibliography/bibliography} 
+
+\clearpage
+\input{sections/08-appendix}
+
+\end{document}

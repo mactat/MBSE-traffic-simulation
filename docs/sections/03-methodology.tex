@@ -1,0 +1,48 @@
+\section{Methodology}
+\label{sec:section3}
+ 
+The aim in the study is to investigate what effects autonomous cars using vehicle to vehicle (V2V) communication have on traffic. The methodology technique chosen to investigate the presented problem stated in \hyperref[sec:problem-statement]{section 2} is presented in the following. This will be done by firstly discussing the proposed microscopic model. Thereafter we present the environment of the model. Finally, we discuss the modelling of the human behaviour and the effect a driver's mood has on the surroundings \& environment. 
+\subsection{Model}
+The aim of the presented model is to allow us to analyse the effects of the different proportions on the highway flow.  Furthermore, we analyse the the inflow and the average velocity of the cars in the environment. \\
+\\
+The proposed model is a microscopic model meaning that we represent the vehicles \& their behavior separately. The different  behavioral aspects range from speed, acceleration, lane changing \& gap acceptance. 
+The model consists of three types of vehicles, cars autonomous cars \& trucks. Each of three vehicles are separate entities that react on received input from the environment.The Three types of vehicles proposed in the model are discussed in more detail in the following. \\ 
+\\ 
+The first type being the type car, which is considered a regular vehicle, where the driver affects decision-making. This means that it is only the driver that decides the course of action for the vehicle. The driver observes the environment \& has a mood attribute that determines how likely he is to react to surroundings such as a car slowing down. \\
+The second type of vehicle in the model is the truck. The decision making for a truck is made by the driver and only the driver, the same as with the car type, however with the crucial difference of having a lower speed limit \& more consciousness driver behavior. This means, that Trucks are more likely to stay on the most right lane, less likely to overtake \& less likely to react to the environment. \\
+As for the third type of vehicle it is the autonomous car. The autonomous car as opposed to the two aforementioned types derives its decision making from two components. The first of these components is the driver \& the second is the V2V communication received from both other autonomous cars \& the environment. The driver input in the autonomous car is weighted lower than decision making that is dependent on the V2V communication received. The V2V communication refers to the communication from the environment as the autonomous cars communicate  with other autonomous cars on the highway. The driver behavior aspects of the three presented vehicles is discussed in further detail in the \hyperref[HumanBehaviour]{human behaviour} subsection.\\ 
+\\
+The model aims to model the real-life phenomena of phantom traffic \& the driver reactions effect on traffic jams. As discussed in the phantom traffic section a disturbance in the traffic flow \& reaction times are the main causes of traffic slow down. Thus, it is essential for the model to be able to replicate how a driver reacts to such a scenario, thus the Intelligent Driver Model (IDM) was selected allowing for a more accurate driver behaviour. \cite{CaoIDM}
+% 
+
+
+
+% ---------------- BELOW CAN BE USED FOR ENV ---------------------------------
+
+% The modeling of the traffic flow is based on a set in of input parameters. 
+%These input parameters will be shortly presented in the fl 
+% The first of these parameters is the inflow. The inflow parameter indicates the ratio of vehicle spawning at the entry lanes of the highway and allows for generation of various degrees \& forms of phantom traffic. The second parameter is the proportion of autonomous cars, which indicates the proportion of the inflow that is auto cars. The third parameter of the traffic flow model is the proportion of trucks. Trucks are similarly to cars however with the crucial difference of having a lower speed limit & more consciousness driver behavior.
+ 
+
+%Furthermore, we allow for the tweaking of the behaviour of the driver as 
+
+%-
+
+\subsection{Environment}
+As stated in the introduction section, the model proposed in this report consists of a highway environment wherein the traffic flow of various types of vehicles is modelled. The highway consists of multiple lanes. The basis of the highway is defined by a length and a speed limit. The length of the highway defined in meters is used as an one of the evaluation criteria for the number of vehicles passing the highway. The speed limit defined in kilometers per hour which defines an upper limit for the speed of the vehicles. Likewise, the average speed of the vehicles is used as an evaluation criteria. The greater number of cars passing the highway and the higher average speed of the vehicles generally indicates less phantom traffic congestion.\\
+Studies shows various methods of defining traffic density. \cite{YANG2017344} For the environment model the traffic inflow is defined as the number of cars spawning at the beginning of the highway. 
+
+\subsection{Human behaviour}
+\label{HumanBehaviour}
+The human behavior was modeled by giving each driver a possibility to do a range of actions same as a driver in the real world could do. These actions are the basic actions that a driver in the real world could do, such as accelerating, braking or changing lanes. To model the human behaviour, each driver is able to do each of these actions and decide what action do depending on the driver surrounding environment. Similar to a real life situation, a driver can only do actions depending on the surrounding environment, as a driver has no knowledge of what is happening outside of their own bubble. 
+
+Each driver was given a random 'mood', this mood decides how likely it is for a driver to do an action. This addresses the fact that there are more aggressive drivers than others. This means that if a driver has a high mood, the driver is more likely to do actions such as accelerating, changing lanes and so fourth. 
+The drivers were modeled to follow regular driving behaviours such as trying to keep to the right if possible, and also to go as close to the speed limit as possible. If a driver sees that it will collide with the car in front, the driver has two decisions it can make, either change lane if possible, or brake to avoid hitting the vehicle in front. 
+
+This behaviour is what causes the traffic jams, since the driver has no knowledge of the decision that the drivers in front of them are going to make, but can only make decisions based on what they can currently observe.\cite{HumanBehaviour}
+
+\subsection{Assumption}
+For the simulation it has been chosen to work in an hypothetical highway environment. This assumption give an initial constraint to the grate level of complexity that a road system can easily reach, however it was necessary to limit the scope of our project. Moreover it gave us the opportunity to focus on producing actual result with the simulator in an environment that, even if simplified, is one of the most used by drivers all around the word and where phantom traffic jams are very common.
+
+Other assumptions regard the communication between vehicles. The V2V communication system is a well defined paradigm that we only take as a baseline in our model. We assume that all the information that a car receive from the others can be used by the vehicles in our simulation to make autonomous decision that take action on the existing drive train of the car. 
+Moreover in this first iteration of the simulator it is also assumed that the communication between vehicles happens without delays or errors. 
