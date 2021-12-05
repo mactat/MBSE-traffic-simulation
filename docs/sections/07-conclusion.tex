@@ -1,0 +1,30 @@
+\section{Conclusion}
+\label{sec}
+The aim of this report was to understand how V2V communication and autonomous driving, would affect traffic flow during peak hours and if it could solve the problem of phantom traffic. For that purpose, a traffic simulator was modeled and developed, it has the capability to replicate a highway environment in which different parameters can be set in order to produce a specific scenario. 
+This simulator has allowed us to test the model and to study how different percentages of autonomous vehicles influence the traffic and, most importantly, it has proved that it is not necessary to have a scenario where the totality of cars are \textit{connected} to obtain relevant benefits. \\
+The main tests replicate a standard highway during rush hour and the results show that with 60\% of the autonomous car the flow is doubled and around 80\% the flow almost reaches its upper limit only increasing slightly if the autonomous car parameter is brought up to 100\%. 
+
+A visualization tool has also been created in order to produce graphical animation of how the traffic varies over time during the simulation and the real-time results. It allows the user to set up and visualize different simulations at the same time in order to have a visual comparison. 
+
+The project resulted in a successful model that has proven to be comprehensive of complex methods such as the real-life behavior of a driver that by itself was a complex challenge. This project managed to recreate an environment in which, if the right parameter is set, it can be clearly observed the generation of phantom traffic jams due to different driving styles and different behaviors of drivers.
+In the same scenario, but with the introduction of connected autonomous cars, it is clear how knowing in advance information about other vehicles and the autonomous driving capabilities prevent the creation of phantom traffic.
+
+\subsection{Future Work}
+In future works following ideas are proposed to improve the performance, functionality, and usability of the simulations system.
+\subsubsection{Entry and exit lane}
+The entry and exit lane is partly implemented in the current system model. Entry and exit lanes aims at creating a more realistic flow of the highway where phantom congestion can occur due to the switching lane behavior that is required of a driver when entering and exiting a highway. 
+\subsubsection{Multiple vehicle classes}
+Implementing different vehicle classes besides the car and truck class. Potential vehicle classes include busses and motorcycles with additional features as maximum speed limit, acceleration, and etc. 
+\subsubsection{Advanced highway}
+Including features aiming to create a realistic course of the highway in particular curved lanes, temporarily closed lanes and stoplights at the end of the highway which reduces the speed of the cars. Additionally, simulating scenarios with emergencies where first respond vehicles requires different driver behavior.  
+\subsubsection{Algorithm for autonomous driving}
+Optimize the autonomous driving of the vehicles by developing an unsupervised machine learning algorithm that trains on the simulation by evaluating the results after each run.
+\subsubsection{Improved V2V communication}
+Implement new parameters in the autonomous car class like error rate, range, and delay in order to have a better simulation of the V2V communication. 
+\subsubsection{Vehicle caravan} 
+Create a car caravan for vehicles with similar destinations thus reducing congestion caused by lane shifting and optimizing air drag however this requires a model that calculates the speed of the communication to create a minimum safe distance for the vehicles when accelerating and braking.
+\subsubsection{Visualization} 
+Optimize animation to improve the representation of the different vehicle classes and the separation of autonomous vehicles. Furthermore, creating a more realistic visualization of the highway.
+\subsubsection{Weather} 
+Including weather changes that affect the traffic flow to create a more realistic simulation model where acceleration and braking depend on the weather conditions.
+
